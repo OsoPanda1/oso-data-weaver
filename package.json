@@ -1,5 +1,5 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "oso-data-weaver",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -9,7 +9,14 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "tamv": "node tamv/cli/tamv.mjs",
+    "tamv:heartbeat": "node tamv/cli/tamv.mjs heartbeat",
+    "tamv:inspect": "node tamv/cli/tamv.mjs inspect",
+    "tamv:snapshot": "node tamv/cli/tamv.mjs snapshot",
+    "tamv:run-demo": "node tamv/cli/tamv.mjs run-demo",
+    "tamv:dispatch": "node tamv/cli/tamv.mjs dispatch",
+    "tamv:registry": "node tamv/cli/tamv.mjs registry"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
