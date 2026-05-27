@@ -1,0 +1,55 @@
+{
+  "protocol": "tamv-federation-v1",
+  "nodeId": "tamv.oso-data-weaver",
+  "repository": "OsoPanda1/oso-data-weaver",
+  "role": "kernel",
+  "version": "0.2.0",
+  "description": "Kernel core for the TAMV project: federation bus, directed workflow graph, recoverable state, agent execution and data weaving across repositories.",
+  "capabilities": [
+    "sovereign-kernel",
+    "federation-bus",
+    "directed-execution-graph",
+    "recoverable-workflows",
+    "multi-agent-runtime",
+    "event-integrity",
+    "node-registry",
+    "quality-scoring",
+    "data-weaving"
+  ],
+  "channels": {
+    "publishes": [
+      "NODE_HEARTBEAT",
+      "TASK_ASSIGNED",
+      "PIPELINE_STARTED",
+      "GEOMETRY_READY",
+      "UNFOLD_READY",
+      "PRINT_TEMPLATE_READY",
+      "PDF_READY",
+      "UI_READY",
+      "QUALITY_SCORE_REPORTED",
+      "PIPELINE_COMPLETED",
+      "FAILURE_REPORTED",
+      "KERNEL_SNAPSHOT_WRITTEN"
+    ],
+    "subscribes": [
+      "*",
+      "NODE_HEARTBEAT",
+      "ASSET_READY",
+      "EXPORT_REQUESTED",
+      "PRODUCT_BUNDLE_READY",
+      "KNOWLEDGE_UPDATED",
+      "DATASET_UPDATED"
+    ]
+  },
+  "state": {
+    "mode": "active",
+    "persistence": ".tamv/state/events.jsonl",
+    "heartbeat": "manual-or-scheduled"
+  },
+  "links": {
+    "bus": "tamv/core/federation-bus.mjs",
+    "kernel": "tamv/core/sovereign-kernel.mjs",
+    "cli": "tamv/cli/tamv.mjs",
+    "schema": "tamv/protocol/tamv-federation-v1.schema.json"
+  }
+}
