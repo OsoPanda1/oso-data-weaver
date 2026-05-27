@@ -1,104 +1,149 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { Header } from "@/components/tamv/Header";
-import { Footer } from "@/components/tamv/Footer";
-import { RepoCard } from "@/components/tamv/RepoCard";
-import { FEDERATIONS, type FederationId } from "@/lib/ecosystem/contracts";
-import { reposByFederation, REPOS } from "@/lib/ecosystem/manifest";
+// routes/federations.$id.tsx
+import { createFileRoute, notFound } from '@tanstack/react-router'
+import { FEDERATIONS } from '@/lib/ecosystem/contracts'
+import type { KnowledgeCell, TAMVArtifact } from '@/lib/knowledge/model'
+import { FederationAtlas } from '@/components/tamv/FederationAtlas'
+import { EventStream } from '@/components/tamv/EventStream'
+import { useKernelStatus } from '@/hooks/use-kernel-status'
 
-const VALID = new Set(Object.keys(FEDERATIONS));
+export const Route = createFileRoute('/federations/$id')({
+  loader: async ({ params }) => {
+    const federation = FEDERATIONS[params.id as keyof typeof FEDERATIONS]
+    if (!federation) {
+      throw notFound({
+        message: `Federación "${params.id}" no existe en el ledger doctrinal`,
+      })
+    }
 
-export const Route = createFileRoute("/federations/$id")({
-  loader: ({ params }) => {
-    if (!VALID.has(params.id)) throw notFound();
-    const id = params.id as FederationId;
-    return { id, fed: FEDERATIONS[id], repos: reposByFederation(id) };
+    // Punto de extensión: aquí podrás leer del ledger (GitHub/BookPI)
+    // para inyectar celdas y artefactos asociados a esta federación.
+    const cells: KnowledgeCell[] = []
+    const artifacts: TAMVArtifact[] = []
+
+    return { federation, cells, artifacts }
   },
-  head: ({ loaderData }) => {
-    const f = loaderData?.fed;
-    return {
-      meta: [
-        { title: f ? `${f.name} — TAMV Kernel` : "Federación — TAMV" },
-        { name: "description", content: f?.mission ?? "Federación TAMV" },
-        { property: "og:title", content: f?.name ?? "Federación TAMV" },
-        { property: "og:description", content: f?.mission ?? "" },
-      ],
-    };
-  },
-  notFoundComponent: () => (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 grid place-items-center px-6">
-        <div className="text-center">
-          <div className="font-mono text-xs text-muted-foreground">404</div>
-          <h1 className="mt-2 font-display text-3xl">Federación no encontrada</h1>
-          <Link to="/" className="mt-4 inline-block text-primary hover:underline">← volver al kernel</Link>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  ),
-  errorComponent: ({ error, reset }) => (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 grid place-items-center px-6 text-center">
-        <div>
-          <h1 className="font-display text-2xl">Algo falló en la federación</h1>
-          <p className="text-sm text-muted-foreground mt-2">{error.message}</p>
-          <button onClick={reset} className="mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">Reintentar</button>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  ),
-  component: FederationDetail,
-});
+  component: FederationView,
+})
 
-function FederationDetail() {
-  const { fed, repos } = Route.useLoaderData();
-  const consumedBy = REPOS.filter((r) => repos.some((rr: { slug: string }) => r.consumes.includes(rr.slug)));
+function FederationView() {
+  const { federation, cells, artifacts } = Route.useLoaderData()
+  const { healthScore } = useKernelStatus()
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 px-6 py-12">
-        <div className="mx-auto max-w-7xl">
-          <Link to="/" className="font-mono text-xs text-muted-foreground hover:text-primary">← kernel</Link>
-
-          <div className="mt-6 flex items-start gap-6">
-            <div
-              className="size-20 rounded-2xl grid place-items-center font-display text-4xl shrink-0"
-              style={{ color: fed.color, background: `color-mix(in oklab, ${fed.color} 12%, transparent)`, border: `1px solid color-mix(in oklab, ${fed.color} 40%, transparent)` }}
-            >
-              {fed.sigil}
-            </div>
+    <div className="min-h-screen bg-[#020202] text-zinc-100">
+      <main className="mx-auto max-w-6xl px-6 py-10 space-y-8">
+        {/* Encabezado doctrinal de la federación */}
+        <header className="flex flex-col gap-3 border-b border-white/10 pb-5">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: fed.color }}>
-                Federación · {fed.id}
-              </div>
-              <h1 className="mt-1 font-display text-4xl md:text-5xl">{fed.name}</h1>
-              <p className="mt-3 max-w-2xl text-muted-foreground">{fed.mission}</p>
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground/80 italic">{fed.domain}</p>
+              <h1
+                className="font-display text-3xl tracking-tight"
+                style={{ color: federation.color }}
+              >
+                {federation.name}
+              </h1>
+              {federation.motto ? (
+                <p className="mt-1 text-sm text-zinc-400">
+                  {federation.motto}
+                </p>
+              ) : null}
+            </div>
+            <div className="text-right text-[11px] font-mono uppercase tracking-[0.2em] text-zinc-500">
+              <div>FEDERACIÓN MD‑X4</div>
+              <div className="text-zinc-300">{federation.id}</div>
             </div>
           </div>
 
-          <section className="mt-12">
-            <h2 className="font-display text-2xl mb-4">Repos en esta federación · {repos.length}</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {repos.map((r: typeof REPOS[number]) => <RepoCard key={r.slug} repo={r} />)}
-            </div>
-          </section>
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono uppercase tracking-[0.2em]">
+            <Badge label="Repos vinculados" value={String(federation.repos?.length ?? 0)} />
+            <Badge label="Celdas cognitivas" value={String(cells.length)} />
+            <Badge label="Artefactos científicos" value={String(artifacts.length)} />
+            <Badge
+              label="Salud del kernel"
+              value={`${healthScore.toFixed(0)}%`}
+              tone={healthScore >= 90 ? 'ok' : healthScore >= 70 ? 'warn' : 'alert'}
+            />
+          </div>
+        </header>
 
-          {consumedBy.length > 0 && (
-            <section className="mt-12">
-              <h2 className="font-display text-2xl mb-4">Consumida en serie por</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {consumedBy.map((r) => <RepoCard key={r.slug} repo={r} />)}
-              </div>
-            </section>
-          )}
-        </div>
+        {/* Atlas filtrado por federación */}
+        <section className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
+          <div className="space-y-4">
+            <PanelShell
+              title="Atlas de Heptafederación"
+              subtitle="Celdas y dependencias filtradas por federación"
+            >
+              <FederationAtlas federationId={federation.id} cells={cells} />
+            </PanelShell>
+          </div>
+
+          <div className="space-y-4">
+            <PanelShell
+              title="Eventos recientes"
+              subtitle="BookPI · Telemetría de esta federación"
+            >
+              <EventStream max={15} filterByFederationId={federation.id} />
+            </PanelShell>
+          </div>
+        </section>
       </main>
-      <Footer />
     </div>
-  );
+  )
+}
+
+function Badge({
+  label,
+  value,
+  tone = 'default',
+}: {
+  label: string
+  value: string
+  tone?: 'default' | 'ok' | 'warn' | 'alert'
+}) {
+  const toneClass =
+    tone === 'ok'
+      ? 'border-emerald-500/60 text-emerald-300'
+      : tone === 'warn'
+      ? 'border-amber-500/60 text-amber-300'
+      : tone === 'alert'
+      ? 'border-red-500/70 text-red-300'
+      : 'border-white/10 text-zinc-300'
+
+  return (
+    <div
+      className={`flex items-baseline gap-2 rounded-full border px-3 py-1.5 bg-black/30 ${toneClass}`}
+    >
+      <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500">
+        {label}
+      </span>
+      <span className="text-xs font-semibold">{value}</span>
+    </div>
+  )
+}
+
+function PanelShell({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string
+  subtitle?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-xl border border-white/5 bg-[#050505]/90 shadow-2xl shadow-black/60 backdrop-blur">
+      <div className="flex items-baseline justify-between border-b border-white/5 px-5 py-3">
+        <div>
+          <h2 className="font-display text-sm tracking-wide text-zinc-50">
+            {title}
+          </h2>
+          {subtitle ? (
+            <p className="text-[11px] text-zinc-500">{subtitle}</p>
+          ) : null}
+        </div>
+        <div className="h-2 w-10 rounded-full bg-gradient-to-r from-emerald-500/40 via-gold/50 to-sky-500/40" />
+      </div>
+      <div className="px-5 py-4">{children}</div>
+    </div>
+  )
 }
