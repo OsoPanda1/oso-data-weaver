@@ -3,10 +3,20 @@
   "nodeId": "tamv.oso-data-weaver",
   "repository": "OsoPanda1/oso-data-weaver",
   "role": "kernel",
-  "version": "0.2.0",
-  "description": "Kernel core for the TAMV project: federation bus, directed workflow graph, recoverable state, agent execution and data weaving across repositories.",
+  "version": "0.3.0",
+  "description": "Kernel core for the TAMV project: ELITE HeHep ontology, BookPI event context, federation bus, directed workflow graph, recoverable state, agent execution and data weaving across repositories.",
+  "elite_context": {
+    "ecosystem": "ELITE HeHep",
+    "doctrine": "MD-X4",
+    "domain": "HEP-1",
+    "pipelines": ["HE-Publish", "HE-Science"],
+    "compatibility": "OSO-compat",
+    "bookpi_required_context": "he_hep_context"
+  },
   "capabilities": [
     "sovereign-kernel",
+    "elite-hehep-ontology",
+    "bookpi-ledger",
     "federation-bus",
     "directed-execution-graph",
     "recoverable-workflows",
@@ -29,7 +39,8 @@
       "QUALITY_SCORE_REPORTED",
       "PIPELINE_COMPLETED",
       "FAILURE_REPORTED",
-      "KERNEL_SNAPSHOT_WRITTEN"
+      "KERNEL_SNAPSHOT_WRITTEN",
+      "BOOKPI_EVENT_RECORDED"
     ],
     "subscribes": [
       "*",
@@ -49,6 +60,8 @@
   "links": {
     "bus": "tamv/core/federation-bus.mjs",
     "kernel": "tamv/core/sovereign-kernel.mjs",
+    "bookpi": "tamv/core/elite-bookpi.mjs",
+    "eliteManifest": "tamv/core/elite-manifest.mjs",
     "cli": "tamv/cli/tamv.mjs",
     "schema": "tamv/protocol/tamv-federation-v1.schema.json"
   }
