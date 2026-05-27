@@ -1,0 +1,88 @@
+{
+  "protocol": "tamv-federation-v1",
+  "generatedAt": "2026-05-27T00:00:00.000Z",
+  "kernel": "tamv.oso-data-weaver",
+  "nodeCount": 10,
+  "nodes": [
+    {
+      "nodeId": "tamv.oso-data-weaver",
+      "repository": "OsoPanda1/oso-data-weaver",
+      "role": "kernel",
+      "capabilities": ["sovereign-kernel", "federation-bus", "directed-execution-graph", "recoverable-workflows", "multi-agent-runtime", "event-integrity", "node-registry", "quality-scoring", "data-weaving"],
+      "publishes": ["NODE_HEARTBEAT", "TASK_ASSIGNED", "PIPELINE_STARTED", "GEOMETRY_READY", "UNFOLD_READY", "PRINT_TEMPLATE_READY", "PDF_READY", "UI_READY", "QUALITY_SCORE_REPORTED", "PIPELINE_COMPLETED", "FAILURE_REPORTED", "KERNEL_SNAPSHOT_WRITTEN"],
+      "subscribes": ["*", "NODE_HEARTBEAT", "ASSET_READY", "EXPORT_REQUESTED", "PRODUCT_BUNDLE_READY", "KNOWLEDGE_UPDATED", "DATASET_UPDATED"]
+    },
+    {
+      "nodeId": "tamv.orchestrator",
+      "repository": "OsoPanda1/tamv-orchestrator",
+      "role": "orchestrator",
+      "capabilities": ["directed-execution-graph", "task-scheduling", "state-recovery", "dispatch-planning", "node-registry"],
+      "publishes": ["NODE_HEARTBEAT", "TASK_ASSIGNED", "PIPELINE_STARTED", "PIPELINE_RECOVERED", "QUALITY_REVIEW_REQUESTED"],
+      "subscribes": ["NODE_HEARTBEAT", "ASSET_READY", "GEOMETRY_READY", "PRINT_TEMPLATE_READY", "QUALITY_SCORE_REPORTED", "FAILURE_REPORTED"]
+    },
+    {
+      "nodeId": "tamv.core-engine",
+      "repository": "OsoPanda1/tamv-core-engine",
+      "role": "core-engine",
+      "capabilities": ["execution-kernel", "state-machine", "quality-scoring"],
+      "publishes": ["NODE_HEARTBEAT", "QUALITY_SCORE_REPORTED", "CORE_STATE_UPDATED"],
+      "subscribes": ["TASK_ASSIGNED", "PIPELINE_STARTED", "FAILURE_REPORTED"]
+    },
+    {
+      "nodeId": "tamv.sovereign-api",
+      "repository": "OsoPanda1/tamv-sovereign-api",
+      "role": "api",
+      "capabilities": ["api-gateway", "event-ingestion", "export-control"],
+      "publishes": ["NODE_HEARTBEAT", "API_REQUEST_RECEIVED", "EXPORT_REQUESTED"],
+      "subscribes": ["TASK_ASSIGNED", "ASSET_READY", "PRINT_TEMPLATE_READY"]
+    },
+    {
+      "nodeId": "tamv.goldprint",
+      "repository": "OsoPanda1/tamv-nexus-goldprint-system",
+      "role": "print",
+      "capabilities": ["svg-generation", "a4-layout", "pdf-compilation", "gold-overlay"],
+      "publishes": ["NODE_HEARTBEAT", "PRINT_TEMPLATE_READY", "PDF_READY"],
+      "subscribes": ["GEOMETRY_READY", "TASK_ASSIGNED"]
+    },
+    {
+      "nodeId": "tamv.web",
+      "repository": "OsoPanda1/tamvweb",
+      "role": "frontend",
+      "capabilities": ["user-interface", "threejs-viewer", "export-ui"],
+      "publishes": ["NODE_HEARTBEAT", "USER_INTENT_RECORDED", "EXPORT_REQUESTED"],
+      "subscribes": ["PIPELINE_STARTED", "ASSET_READY", "PDF_READY", "FAILURE_REPORTED"]
+    },
+    {
+      "nodeId": "tamv.nexus-core",
+      "repository": "OsoPanda1/tamv-nexus-core",
+      "role": "agent",
+      "capabilities": ["agent-coordination", "knowledge-routing", "reflection-loop"],
+      "publishes": ["NODE_HEARTBEAT", "REFLECTION_REPORTED", "OPTIMIZATION_PROPOSED"],
+      "subscribes": ["QUALITY_REVIEW_REQUESTED", "FAILURE_REPORTED", "PIPELINE_STARTED"]
+    },
+    {
+      "nodeId": "tamv.atlas",
+      "repository": "OsoPanda1/tamv-atlas",
+      "role": "knowledge",
+      "capabilities": ["knowledge-index", "documentation-routing", "context-packaging"],
+      "publishes": ["NODE_HEARTBEAT", "KNOWLEDGE_UPDATED"],
+      "subscribes": ["TASK_ASSIGNED", "QUALITY_REVIEW_REQUESTED"]
+    },
+    {
+      "nodeId": "tamv.data",
+      "repository": "OsoPanda1/datostamv",
+      "role": "data",
+      "capabilities": ["data-store", "artifact-ledger", "feedback-log"],
+      "publishes": ["NODE_HEARTBEAT", "DATASET_UPDATED"],
+      "subscribes": ["ASSET_READY", "PDF_READY", "QUALITY_SCORE_REPORTED", "FAILURE_REPORTED"]
+    },
+    {
+      "nodeId": "tamv.real-del-monte-explorer",
+      "repository": "OsoPanda1/real-del-monte-explorer-11b3982a",
+      "role": "asset",
+      "capabilities": ["asset-source", "experience-content", "preview-material"],
+      "publishes": ["NODE_HEARTBEAT", "ASSET_READY"],
+      "subscribes": ["TASK_ASSIGNED", "QUALITY_REVIEW_REQUESTED"]
+    }
+  ]
+}
