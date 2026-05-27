@@ -1,26 +1,46 @@
 # OSO Data Weaver - TAMV Kernel Core
 
-`OsoPanda1/oso-data-weaver` is the kernel core for the TAMV ecosystem. It fuses the original TAMV orchestrator into a self-contained executable layer for federation, state recovery, multi-agent workflow execution, data weaving and cross-repository coordination.
+`OsoPanda1/oso-data-weaver` is the kernel core for the TAMV ecosystem. It fuses the original TAMV orchestrator into a self-contained executable layer for ELITE HeHep ontology, BookPI events, federation, state recovery, multi-agent workflow execution, data weaving and cross-repository coordination.
 
 ## Kernel Responsibilities
 
 - Own the TAMV federation protocol: `tamv-federation-v1`.
+- Own the ELITE HeHep ontology: He pipelines and Hep domains.
 - Maintain the canonical node registry for connected repositories.
-- Publish and validate signed JSONL events with SHA-256 integrity hashes.
+- Publish and validate signed JSONL federation events with SHA-256 integrity hashes.
+- Publish hardened BookPI events with mandatory `he_hep_context`.
 - Execute recoverable directed workflows with dependency resolution.
 - Run the core TAMV agents for geometry, unfolding, layout, rendering, UI state and optimization.
 - Persist workflow snapshots under `.tamv/state`.
 - Provide operational commands through `npm run tamv:*`.
 
+## ELITE HeHep Identity
+
+ELITE HeHep means `Ecosistema Latino Interfederado TAMV Enterprise - Hexagonal Heptafederado`.
+
+- He pipelines: `HE-Ingest`, `HE-Transform`, `HE-Publish`, `HE-Science`, `HE-Economy`, `HE-Identity`.
+- Hep domains: `HEP-1` Central, `HEP-2` Operaciones, `HEP-3` Infraestructura, `HEP-4` Seguridad, `HEP-5` Financiera, `HEP-6` Logistica, `HEP-7` Usuarios.
+- Kernel context: `HEP-1` with `HE-Publish` and `HE-Science` active.
+
 ## Repository Map
 
 ```text
+lib/
+  contracts/
+    elite-hehep.ts                   # He/Hep domain types and validators
+    bookpi.ts                        # BookPI event contracts
+    bookpi-emitter.ts                # TypeScript hardened emitter
+  ecosystem/
+    manifest.ts                      # ELITE HeHep manifest
+    isabella-hehep-map.ts            # Isabella/TAMV module mapping
 tamv/
   cli/
     tamv.mjs                         # Operator CLI
   core/
     federation-bus.mjs               # Event bus, manifests, registry, dispatch planning
     sovereign-kernel.mjs             # Workflow graph, agents, recovery, snapshots
+    elite-bookpi.mjs                 # Runtime BookPI emitter and projection
+    elite-manifest.mjs               # Runtime ELITE HeHep manifest
   protocol/
     tamv-federation-v1.schema.json   # Node manifest schema
   registry/
@@ -52,6 +72,8 @@ npm run tamv:snapshot
 npm run tamv:registry
 npm run tamv:dispatch
 npm run tamv:run-demo
+npm run tamv:elite
+npm run tamv:bookpi
 ```
 
 The demo workflow executes the TAMV fairy papercraft pipeline as a recoverable state machine:
@@ -65,24 +87,31 @@ The demo workflow executes the TAMV fairy papercraft pipeline as a recoverable s
 
 ## Event State
 
-Events are stored locally at:
+Federation events are stored locally at:
 
 ```text
 .tamv/state/events.jsonl
 ```
 
-Each event includes:
+BookPI events are stored locally at:
 
-- `protocol`
-- `type`
-- `source`
-- `repository`
-- `createdAt`
+```text
+.tamv/state/bookpi-events.jsonl
+```
+
+Every BookPI event includes:
+
+- `header.protocol`
+- `header.type`
+- `header.source`
+- `header.repository`
+- `header.he_hep_context.hexagon`
+- `header.he_hep_context.domain`
 - `payload`
 - `meta`
-- `integrity`
+- `integrity.sha256`
 
-The kernel refuses to append events with invalid integrity.
+The BookPI emitter rejects events without valid He/Hep context or with invalid integrity.
 
 ## Recovery Model
 
@@ -117,10 +146,11 @@ A node manifest must define:
 - `channels.publishes`
 - `channels.subscribes`
 - `state.persistence`
+- `elite_context` when the node participates in ELITE HeHep routing.
 
 ## Operational Notes
 
-This kernel is intentionally dependency-free at the TAMV layer. It uses only Node.js built-in modules so it can run inside frontend, backend or worker repositories without forcing new package dependencies.
+This kernel is intentionally dependency-free at the TAMV runtime layer. It uses only Node.js built-in modules so it can run inside frontend, backend or worker repositories without forcing new package dependencies.
 
 The current layer is file-backed and local-first. Network transport, GitHub event collection, Supabase persistence or queue workers can be added as adapters without changing the protocol or agent contract.
 
@@ -131,7 +161,8 @@ The current layer is file-backed and local-first. Network transport, GitHub even
 3. Wire `tamvweb` export controls to publish `EXPORT_REQUESTED`.
 4. Connect `tamv-nexus-goldprint-system` to consume `GEOMETRY_READY` and publish `PDF_READY`.
 5. Add release bundle generation in `tamv-sovereign-hub`.
+6. Add external adapters for BookPI transport, GitHub ledger sync and guardian audit trails.
 
 ## Status
 
-TAMV kernel fusion is active. `oso-data-weaver` is now the canonical kernel core for the project.
+TAMV kernel fusion is active. `oso-data-weaver` is now the canonical ELITE HeHep / TAMV kernel core for the project.
