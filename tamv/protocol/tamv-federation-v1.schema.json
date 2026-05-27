@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tamv.local/protocol/tamv-federation-v1.schema.json",
+  "title": "TAMV Federation Node Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "nodeId", "repository", "role", "version", "capabilities", "channels", "state"],
+  "properties": {
+    "protocol": { "const": "tamv-federation-v1" },
+    "nodeId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,120}$" },
+    "repository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+    "role": {
+      "type": "string",
+      "enum": ["kernel", "orchestrator", "core-engine", "api", "frontend", "geometry", "print", "knowledge", "asset", "agent", "documentation", "data", "product"]
+    },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publishes", "subscribes"],
+      "properties": {
+        "publishes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "subscribes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "persistence", "heartbeat"],
+      "properties": {
+        "mode": { "enum": ["active", "passive", "planned"] },
+        "persistence": { "type": "string" },
+        "heartbeat": { "type": "string" }
+      }
+    },
+    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+  }
+}
