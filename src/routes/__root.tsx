@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "TAMVONLINE-COREKERNEL" },
+      { name: "description", content: "COMPILADOR DEL ECOSISTEMA TAMV ONLINE" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "TAMVONLINE-COREKERNEL" },
+      { property: "og:description", content: "COMPILADOR DEL ECOSISTEMA TAMV ONLINE" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "TAMVONLINE-COREKERNEL" },
+      { name: "twitter:description", content: "COMPILADOR DEL ECOSISTEMA TAMV ONLINE" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ee3aec27-3852-4612-8e92-9cdac9386158" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ee3aec27-3852-4612-8e92-9cdac9386158" },
     ],
     links: [
       {
