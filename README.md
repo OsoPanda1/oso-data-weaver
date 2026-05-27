@@ -1,4 +1,4 @@
-# OSO Data Weaver — TAMV Kernel Core
+# OSO Data Weaver - TAMV Kernel Core
 
 `OsoPanda1/oso-data-weaver` is the kernel core for the TAMV ecosystem. It fuses the original TAMV orchestrator into a self-contained executable layer for federation, state recovery, multi-agent workflow execution, data weaving and cross-repository coordination.
 
