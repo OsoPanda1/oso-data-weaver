@@ -2,7 +2,6 @@ import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import {
   DEFAULT_STATE_DIR,
-  appendEvent,
   createEvent,
   inspectState,
   loadManifest,
@@ -14,9 +13,23 @@ import {
   stableHash,
   writeJson,
 } from './federation-bus.mjs';
+import { emitLocalEliteBookPiEvent, projectBookPiLedger } from './elite-bookpi.mjs';
+import { ELITE_HEHEP_MANIFEST } from './elite-manifest.mjs';
 
 const WORKFLOW_FILE = 'workflows.json';
 const SNAPSHOT_FILE = 'kernel-snapshot.json';
+
+const EVENT_CONTEXTS = {
+  PIPELINE_STARTED: { hexagon: 'HE-Publish', domain: 'HEP-1' },
+  GEOMETRY_READY: { hexagon: 'HE-Transform', domain: 'HEP-2' },
+  UNFOLD_READY: { hexagon: 'HE-Transform', domain: 'HEP-2' },
+  PRINT_TEMPLATE_READY: { hexagon: 'HE-Publish', domain: 'HEP-1' },
+  PDF_READY: { hexagon: 'HE-Publish', domain: 'HEP-1' },
+  UI_READY: { hexagon: 'HE-Identity', domain: 'HEP-7' },
+  QUALITY_SCORE_REPORTED: { hexagon: 'HE-Science', domain: 'HEP-1' },
+  PIPELINE_COMPLETED: { hexagon: 'HE-Science', domain: 'HEP-1' },
+  FAILURE_REPORTED: { hexagon: 'HE-Transform', domain: 'HEP-4' },
+};
 
 export class TaskGraph {
   constructor(tasks = []) {
@@ -109,6 +122,7 @@ export function createDefaultAgents() {
           scaleCm: 80,
           modules: ['head', 'torso', 'arms', 'legs', 'detachable-wings', 'base'],
           exports: ['glb', 'obj'],
+          he_hep_context: EVENT_CONTEXTS.GEOMETRY_READY,
           nextEvent: 'GEOMETRY_READY',
           contextHash: stableHash(context.parameters ?? {}),
         };
@@ -123,6 +137,7 @@ export function createDefaultAgents() {
           algorithm: 'graph-based-unfold-v1',
           lineTypes: ['cut', 'mountain', 'valley'],
           overlapPolicy: 'resolve-by-island-translation',
+          he_hep_context: EVENT_CONTEXTS.UNFOLD_READY,
           nextEvent: 'UNFOLD_READY',
           geometryRef: context.results?.GeometryAgent?.model ?? 'pending-geometry',
         };
@@ -137,6 +152,7 @@ export function createDefaultAgents() {
           media: 'A4',
           minimumPages: 100,
           marginMm: 8,
+          he_hep_context: EVENT_CONTEXTS.PRINT_TEMPLATE_READY,
           nextEvent: 'PRINT_TEMPLATE_READY',
           unfoldingRef: context.results?.UnfoldAgent?.algorithm ?? 'pending-unfold',
         };
@@ -150,6 +166,7 @@ export function createDefaultAgents() {
         return {
           outputs: ['white-system.pdf', 'gold-overlay.pdf', 'commercial-bundle.zip'],
           colorSystem: 'white-gold-cmyk-simulation',
+          he_hep_context: EVENT_CONTEXTS.PDF_READY,
           nextEvent: 'PDF_READY',
           layoutRef: context.results?.LayoutAgent?.media ?? 'pending-layout',
         };
@@ -163,6 +180,7 @@ export function createDefaultAgents() {
         return {
           controls: ['scale', 'wing-joints', 'paper-density', 'gold-overlay'],
           statusSurface: 'pipeline-dashboard',
+          he_hep_context: EVENT_CONTEXTS.UI_READY,
           nextEvent: 'UI_READY',
           exportEnabled: Boolean(context.results?.RenderAgent),
         };
@@ -178,6 +196,7 @@ export function createDefaultAgents() {
         return {
           qualityScore,
           nextVersion: qualityScore >= 90 ? 'v2-ready' : 'v1-improve',
+          he_hep_context: EVENT_CONTEXTS.QUALITY_SCORE_REPORTED,
           nextEvent: 'QUALITY_SCORE_REPORTED',
           bottlenecks: qualityScore >= 90 ? [] : ['manual-pdf-validation', 'geometry-asset-verification'],
         };
@@ -203,13 +222,16 @@ export class TamvSovereignKernel {
 
   async snapshot(extra = {}) {
     const state = await inspectState(this.stateDir);
+    const bookpi = await projectBookPiLedger(this.stateDir);
     const snapshot = {
       kernel: 'oso-data-weaver',
+      elite: ELITE_HEHEP_MANIFEST,
       generatedAt: new Date().toISOString(),
       manifest: this.manifest ?? await loadManifest(this.manifestPath),
       registry: this.registry ?? await readJson(this.registryPath),
       agents: this.agents.list(),
       state,
+      bookpi,
       ...extra,
     };
     await writeJson(resolve(this.stateDir, SNAPSHOT_FILE), snapshot);
@@ -219,6 +241,7 @@ export class TamvSovereignKernel {
   async heartbeat() {
     await this.init();
     const event = await publishHeartbeat(this.manifest, this.stateDir);
+    await this.emitBookPi('NODE_HEARTBEAT', { health: 'ready', event }, { hexagon: 'HE-Publish', domain: 'HEP-1' });
     await this.snapshot({ latestHeartbeat: event });
     return event;
   }
@@ -247,7 +270,7 @@ export class TamvSovereignKernel {
       failedTasks: [],
     };
     await this.persistWorkflow(workflowState);
-    await publishEvent(this.manifest, 'PIPELINE_STARTED', { workflowId, parameters }, {}, this.stateDir);
+    await this.publishKernelEvent('PIPELINE_STARTED', { workflowId, parameters });
 
     try {
       for (const layer of graph.layers()) {
@@ -255,13 +278,13 @@ export class TamvSovereignKernel {
         for (const output of outputs) {
           workflowState.results[output.agentId] = output.result;
           workflowState.completedTasks.push(output.taskId);
-          await publishEvent(this.manifest, output.eventType, { workflowId, taskId: output.taskId, agentId: output.agentId, result: output.result }, {}, this.stateDir);
+          await this.publishKernelEvent(output.eventType, { workflowId, taskId: output.taskId, agentId: output.agentId, result: output.result }, output.result.he_hep_context);
         }
         await this.persistWorkflow(workflowState);
       }
       workflowState.status = 'completed';
       workflowState.completedAt = new Date().toISOString();
-      await publishEvent(this.manifest, 'PIPELINE_COMPLETED', { workflowId, results: workflowState.results }, {}, this.stateDir);
+      await this.publishKernelEvent('PIPELINE_COMPLETED', { workflowId, results: workflowState.results });
       await this.persistWorkflow(workflowState);
       await this.snapshot({ latestWorkflow: workflowState });
       return workflowState;
@@ -269,10 +292,32 @@ export class TamvSovereignKernel {
       workflowState.status = 'failed';
       workflowState.failedAt = new Date().toISOString();
       workflowState.error = { message: error.message, stack: error.stack };
-      await publishEvent(this.manifest, 'FAILURE_REPORTED', { workflowId, error: workflowState.error }, {}, this.stateDir);
+      await this.publishKernelEvent('FAILURE_REPORTED', { workflowId, error: workflowState.error });
       await this.persistWorkflow(workflowState);
       throw error;
     }
+  }
+
+  async publishKernelEvent(type, payload, context = EVENT_CONTEXTS[type] ?? { hexagon: 'HE-Publish', domain: 'HEP-1' }) {
+    const event = await publishEvent(this.manifest, type, payload, { he_hep_context: context }, this.stateDir);
+    await this.emitBookPi(type, payload, context);
+    return event;
+  }
+
+  async emitBookPi(type, payload, context) {
+    return emitLocalEliteBookPiEvent({
+      protocol: this.manifest.protocol,
+      type,
+      source: this.manifest.nodeId,
+      repository: this.manifest.repository,
+      payload,
+      meta: {
+        role: this.manifest.role,
+        kernel: 'oso-data-weaver',
+        doctrine: 'MD-X4',
+      },
+      context,
+    }, this.stateDir);
   }
 
   async runTask(task, workflowState) {
