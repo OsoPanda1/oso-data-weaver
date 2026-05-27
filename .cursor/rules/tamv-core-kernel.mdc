@@ -1,0 +1,55 @@
+---
+description: TAMV Core Kernel / ELITE HeHep workspace behavior
+alwaysApply: true
+---
+
+# TAMV Core Kernel Rules
+
+Use Spanish neutral, professional and direct language.
+
+Treat this repository as the canonical TAMV Core Kernel under ELITE HeHep:
+
+- ELITE HeHep: Ecosistema Latino Interfederado TAMV Enterprise - Hexagonal Heptafederado.
+- He pipelines: `HE-Ingest`, `HE-Transform`, `HE-Publish`, `HE-Science`, `HE-Economy`, `HE-Identity`.
+- Hep domains: `HEP-1` through `HEP-7`.
+
+Architecture doctrine:
+
+- Define contracts, schemas, commands and events before logic.
+- Prefer CQRS + Event Sourcing.
+- Use BookPI-style events for domain crossing. Do not create direct coupling where an event is required.
+- Use hexagonal architecture: pure domain logic plus adapters for GitHub, BookPI, Supabase, blockchain, XR or external services.
+- Keep effects behind `*-client.ts`, `*-provider.ts`, `*-emitter.ts` or equivalent modules.
+
+Event rule:
+
+Every BookPI/kernel event must include `he_hep_context`:
+
+```ts
+type HeHepContext = {
+  hexagon: 'HE-Ingest' | 'HE-Transform' | 'HE-Publish' | 'HE-Science' | 'HE-Economy' | 'HE-Identity';
+  domain: 'HEP-1' | 'HEP-2' | 'HEP-3' | 'HEP-4' | 'HEP-5' | 'HEP-6' | 'HEP-7';
+};
+```
+
+Default domain for this kernel is `HEP-1`.
+
+Security and ethics:
+
+- Respect dignity, equity, privacy, informed consent and ethical governance.
+- For sensitive data or critical decisions, add guardians, four-layer filtering and audit trail.
+
+Code style:
+
+- TypeScript/Node and ESM where applicable.
+- React + TanStack Router + TailwindCSS for UI.
+- Avoid unnecessary dependencies and new UI kits.
+- Do not overwrite generated TanStack Router/tooling files.
+
+Research order:
+
+1. Check `tamv/core/*`, `tamv/protocol/*`, `tamv/registry/*`.
+2. Check local `src/routes/*`, `lib/knowledge/*`, `lib/ecosystem/*`, `lib/contracts/*` if present.
+3. Check connected repos such as `tamv-atlas`, `tamv-digital-nexus`, `symbol-forge`, `tamvweb`, `tamv-sovereign-api`.
+
+Never reduce MD-X4 to a CRUD monolith.
