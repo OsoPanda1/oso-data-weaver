@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import { TamvSovereignKernel } from '../core/sovereign-kernel.mjs';
-import { inspectState, loadManifest, planDispatch, publishEvent, publishHeartbeat, readEvents, readJson } from '../core/federation-bus.mjs';
+import { inspectState, loadManifest, planDispatch, publishEvent, readEvents, readJson } from '../core/federation-bus.mjs';
+import { ELITE_HEHEP_MANIFEST, ISABELLA_HEHEP_MODULE_MAP } from '../core/elite-manifest.mjs';
+import { emitLocalEliteBookPiEvent, projectBookPiLedger, readBookPiEvents } from '../core/elite-bookpi.mjs';
 
 const command = process.argv[2] ?? 'help';
 const args = process.argv.slice(3);
@@ -23,13 +25,17 @@ async function main() {
     console.log(`TAMV oso-data-weaver kernel
 
 Commands:
-  heartbeat               Publish NODE_HEARTBEAT into .tamv/state/events.jsonl
+  heartbeat               Publish NODE_HEARTBEAT into .tamv/state/events.jsonl and BookPI
   inspect                 Inspect local kernel event state
   snapshot                Write and print kernel snapshot
   run-demo [json]          Run fairy 80cm papercraft workflow with optional JSON parameters
   recover <workflowId>     Read persisted workflow state
   dispatch                Build dispatch plan for latest local event
-  publish <type> [json]    Publish a custom event with optional JSON payload
+  publish <type> [json]    Publish a custom federation event
+  bookpi                  Print BookPI local projection
+  bookpi:events           Print BookPI local events
+  bookpi:emit <type> [json] [contextJson]
+  elite                   Print ELITE HeHep manifest and Isabella map
   registry                Print fused node registry
 `);
     return;
@@ -88,6 +94,39 @@ Commands:
     const payload = args[1] ? JSON.parse(args[1]) : {};
     const manifest = await loadManifest();
     print(await publishEvent(manifest, type, payload, {}, stateDir));
+    return;
+  }
+
+  if (command === 'bookpi') {
+    print(await projectBookPiLedger(stateDir));
+    return;
+  }
+
+  if (command === 'bookpi:events') {
+    print(await readBookPiEvents(stateDir));
+    return;
+  }
+
+  if (command === 'bookpi:emit') {
+    const type = args[0];
+    if (!type) throw new Error('bookpi:emit requires an event type.');
+    const payload = args[1] ? JSON.parse(args[1]) : {};
+    const context = args[2] ? JSON.parse(args[2]) : undefined;
+    const manifest = await loadManifest();
+    print(await emitLocalEliteBookPiEvent({
+      protocol: manifest.protocol,
+      type,
+      source: manifest.nodeId,
+      repository: manifest.repository,
+      payload,
+      meta: { role: manifest.role, kernel: 'oso-data-weaver', doctrine: 'MD-X4' },
+      context,
+    }, stateDir));
+    return;
+  }
+
+  if (command === 'elite') {
+    print({ manifest: ELITE_HEHEP_MANIFEST, isabellaModules: ISABELLA_HEHEP_MODULE_MAP });
     return;
   }
 
