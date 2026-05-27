@@ -9,38 +9,128 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as BookpiRouteImport } from './routes/bookpi'
+import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FederationsIdRouteImport } from './routes/federations.$id'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 
+const ContractsRoute = ContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookpiRoute = BookpiRouteImport.update({
+  id: '/bookpi',
+  path: '/bookpi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtlasRoute = AtlasRouteImport.update({
+  id: '/atlas',
+  path: '/atlas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FederationsIdRoute = FederationsIdRouteImport.update({
+  id: '/federations/$id',
+  path: '/federations/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/bookpi': typeof BookpiRoute
+  '/contracts': typeof ContractsRoute
+  '/federations/$id': typeof FederationsIdRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/bookpi': typeof BookpiRoute
+  '/contracts': typeof ContractsRoute
+  '/federations/$id': typeof FederationsIdRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/bookpi': typeof BookpiRoute
+  '/contracts': typeof ContractsRoute
+  '/federations/$id': typeof FederationsIdRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/atlas'
+    | '/bookpi'
+    | '/contracts'
+    | '/federations/$id'
+    | '/api/public/manifest'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/atlas'
+    | '/bookpi'
+    | '/contracts'
+    | '/federations/$id'
+    | '/api/public/manifest'
+  id:
+    | '__root__'
+    | '/'
+    | '/atlas'
+    | '/bookpi'
+    | '/contracts'
+    | '/federations/$id'
+    | '/api/public/manifest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtlasRoute: typeof AtlasRoute
+  BookpiRoute: typeof BookpiRoute
+  ContractsRoute: typeof ContractsRoute
+  FederationsIdRoute: typeof FederationsIdRoute
+  ApiPublicManifestRoute: typeof ApiPublicManifestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/contracts': {
+      id: '/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookpi': {
+      id: '/bookpi'
+      path: '/bookpi'
+      fullPath: '/bookpi'
+      preLoaderRoute: typeof BookpiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atlas': {
+      id: '/atlas'
+      path: '/atlas'
+      fullPath: '/atlas'
+      preLoaderRoute: typeof AtlasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +138,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/federations/$id': {
+      id: '/federations/$id'
+      path: '/federations/$id'
+      fullPath: '/federations/$id'
+      preLoaderRoute: typeof FederationsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtlasRoute: AtlasRoute,
+  BookpiRoute: BookpiRoute,
+  ContractsRoute: ContractsRoute,
+  FederationsIdRoute: FederationsIdRoute,
+  ApiPublicManifestRoute: ApiPublicManifestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
