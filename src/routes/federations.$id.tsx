@@ -55,7 +55,7 @@ export const Route = createFileRoute("/federations/$id")({
 
 function FederationDetail() {
   const { fed, repos } = Route.useLoaderData();
-  const consumedBy = REPOS.filter((r) => repos.some((rr) => r.consumes.includes(rr.slug)));
+  const consumedBy = REPOS.filter((r) => repos.some((rr: { slug: string }) => r.consumes.includes(rr.slug)));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -84,7 +84,7 @@ function FederationDetail() {
           <section className="mt-12">
             <h2 className="font-display text-2xl mb-4">Repos en esta federación · {repos.length}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {repos.map((r) => <RepoCard key={r.slug} repo={r} />)}
+              {repos.map((r: typeof REPOS[number]) => <RepoCard key={r.slug} repo={r} />)}
             </div>
           </section>
 
