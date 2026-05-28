@@ -53,7 +53,7 @@ async function measure(key: IntegrationKey, label: string, endpoint: string, con
 export async function validateOrcid(): Promise<IntegrationValidationResult> {
   const orcidId = process.env.ORCID_ID;
   const configured = Boolean(orcidId || process.env.ORCID_CLIENT_ID || process.env.ORCID_API_KEY);
-  const endpoint = orcidId ? `https://pub.orcid.org/v3.0/${encodeURIComponent(orcidId)}/record` : "https://pub.orcid.org/v3.0/expanded-search";
+  const endpoint = orcidId ? `https://pub.orcid.org/v3.0/${encodeURIComponent(orcidId)}/record` : "https://pub.orcid.org/v3.0/expanded-search/?q=*&rows=0";
   return measure("orcid", "ORCID", endpoint, configured, () =>
     fetch(endpoint, { headers: { Accept: "application/json", "User-Agent": "tamv-core-kernel" } }),
   );
