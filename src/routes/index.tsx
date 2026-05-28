@@ -127,29 +127,34 @@ function Home() {
 //  Subcomponentes de presentación
 // -----------------------------
 
-function StatusIndicator({
-  active,
-  label,
-}: {
-  active: boolean;
-  label: string;
-}) {
+function StatusIndicator(props: { active: boolean; label?: string; small?: boolean }) {
+  if (props.small) {
+    return (
+      <div
+        className={`h-1.5 w-1.5 rounded-full ${
+          props.active ? "bg-emerald-400" : "bg-red-400/80"
+        }`}
+      />
+    );
+  }
   return (
     <div className="flex items-center gap-2">
       <div
         className={`h-2 w-2 rounded-full transition-colors ${
-          active
+          props.active
             ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.7)]"
             : "bg-red-500/80 shadow-[0_0_6px_rgba(248,113,113,0.5)]"
         }`}
       />
-      <span
-        className={`select-none ${
-          active ? "text-zinc-200" : "text-red-400"
-        }`}
-      >
-        {label}
-      </span>
+      {props.label ? (
+        <span
+          className={`select-none text-[11px] uppercase tracking-[0.2em] ${
+            props.active ? "text-zinc-200" : "text-red-400"
+          }`}
+        >
+          {props.label}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -178,9 +183,7 @@ function PanelShell({
     <div className="rounded-xl border border-white/5 bg-[#050505]/90 shadow-2xl shadow-black/60 backdrop-blur">
       <div className="flex items-baseline justify-between border-b border-white/5 px-5 py-3">
         <div>
-          <h3 className="font-display text-sm tracking-wide text-zinc-50">
-            {title}
-          </h3>
+          <h3 className="font-display text-sm tracking-wide text-zinc-50">{title}</h3>
           {subtitle ? (
             <p className="text-[11px] text-zinc-500">{subtitle}</p>
           ) : null}
@@ -206,7 +209,6 @@ function IdentityMatrix({
     { label: "Zenodo", active: zenodoLinked, hint: "DOIs y depósitos" },
     { label: "Figshare", active: figshareLinked, hint: "Datasets y outputs" },
   ];
-
   return (
     <div className="grid grid-cols-3 gap-3 text-[11px] font-mono">
       {items.map((item) => (
@@ -215,57 +217,12 @@ function IdentityMatrix({
           className="flex flex-col gap-1 rounded-md border border-white/5 bg-black/40 p-2.5"
         >
           <div className="flex items-center justify-between">
-            <span className="uppercase tracking-[0.18em] text-zinc-300">
-              {item.label}
-            </span>
-            <StatusIndicator small active={item.active} label="" />
+            <span className="uppercase tracking-[0.18em] text-zinc-300">{item.label}</span>
+            <StatusIndicator small active={item.active} />
           </div>
           <span className="text-[10px] text-zinc-500">{item.hint}</span>
         </div>
       ))}
-    </div>
-  );
-}
-
-// Variante pequeña de StatusIndicator para celdas compactas
-function StatusIndicatorSmall({
-  active,
-}: {
-  active: boolean;
-}) {
-  return (
-    <div
-      className={`h-1.5 w-1.5 rounded-full ${
-        active ? "bg-emerald-400" : "bg-red-400/80"
-      }`}
-    />
-  );
-}
-
-// Overload para usar en IdentityMatrix sin romper el export principal
-function StatusIndicator(props: any) {
-  if ("small" in props) {
-    return <StatusIndicatorSmall active={props.active} />;
-  }
-  const { active, label } = props as { active: boolean; label: string };
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className={`h-2 w-2 rounded-full transition-colors ${
-          active
-            ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.7)]"
-            : "bg-red-500/80 shadow-[0_0_6px_rgba(248,113,113,0.5)]"
-        }`}
-      />
-      {label ? (
-        <span
-          className={`select-none text-[11px] uppercase tracking-[0.2em] ${
-            active ? "text-zinc-200" : "text-red-400"
-          }`}
-        >
-          {label}
-        </span>
-      ) : null}
     </div>
   );
 }
