@@ -12,7 +12,6 @@ import {
   readEvents,
   readJson,
   stableHash,
-  writeJson,
 } from './federation-bus.mjs';
 import {
   emitLocalEliteBookPiEvent,
@@ -20,7 +19,7 @@ import {
 } from './elite-bookpi.mjs';
 import { ELITE_HEHEP_MANIFEST } from './elite-manifest.mjs';
 
-const WORKFLOW_FILE = 'workflows.json';
+const WORKFLOW_FILE_PREFIX = 'workflow-';
 const SNAPSHOT_FILE = 'kernel-snapshot.json';
 
 // Inmutabilidad estricta para los contextos de las 7 Federaciones
@@ -197,7 +196,11 @@ export function createDefaultAgents() {
     {
       id: 'UnfoldAgent',
       role: 'geometry',
-      capabilities: ['edge-classification', 'island-segmentation', 'uv-flattening'],
+      capabilities: [
+        'edge-classification',
+        'island-segmentation',
+        'uv-flattening',
+      ],
       async run(context) {
         return {
           algorithm: 'graph-based-unfold-v1',
@@ -205,7 +208,8 @@ export function createDefaultAgents() {
           overlapPolicy: 'resolve-by-island-translation',
           he_hep_context: EVENT_CONTEXTS.UNFOLD_READY,
           nextEvent: 'UNFOLD_READY',
-          geometryRef: context.results?.GeometryAgent?.model ?? 'pending-geometry',
+          geometryRef:
+            context.results?.GeometryAgent?.model ?? 'pending-geometry',
         };
       },
     },
@@ -220,7 +224,8 @@ export function createDefaultAgents() {
           marginMm: 8,
           he_hep_context: EVENT_CONTEXTS.PRINT_TEMPLATE_READY,
           nextEvent: 'PRINT_TEMPLATE_READY',
-          unfoldingRef: context.results?.UnfoldAgent?.algorithm ?? 'pending-unfold',
+          unfoldingRef:
+            context.results?.UnfoldAgent?.algorithm ?? 'pending-unfold',
         };
       },
     },
@@ -281,7 +286,11 @@ export function createDefaultAgents() {
 // ============================================================================
 // HELPERS: reintentos y timeout de agentes
 // ============================================================================
-async function runWithRetries(agent, secureContext, { retries, timeoutMs, taskId }) {
+async function runWithRetries(
+  agent,
+  secureContext,
+  { retries, timeoutMs, taskId },
+) {
   let attempt = 0;
   let lastError;
 
@@ -328,6 +337,25 @@ async function runWithRetries(agent, secureContext, { retries, timeoutMs, taskId
   throw lastError;
 }
 
+function validateAgentResult(task, agent, result) {
+  if (!result || typeof result !== 'object') {
+    const err = new Error(
+      `TAMV-CRITICAL: Agente ${agent.id} devolvió resultado inválido en task ${task.id}`,
+    );
+    err.code = 'INVALID_RESULT';
+    throw err;
+  }
+
+  // Para tareas que no definen publishes, exigimos nextEvent
+  if (!task.publishes && !result.nextEvent) {
+    const err = new Error(
+      `TAMV-CRITICAL: Resultado sin nextEvent para task ${task.id}`,
+    );
+    err.code = 'MISSING_EVENT';
+    throw err;
+  }
+}
+
 // ============================================================================
 // KERNEL HEPTAFEDERADO (TAMV-K5)
 // ============================================================================
@@ -343,7 +371,6 @@ export class TamvSovereignKernel {
       state: this.baseDir,
       manifest: this.secureResolve(manifestPath),
       registry: this.secureResolve(registryPath),
-      workflows: this.secureResolve(WORKFLOW_FILE, true),
     };
     this.agents = agents;
     this.lastLedgerHash = null;
@@ -637,6 +664,8 @@ export class TamvSovereignKernel {
       taskId: task.id,
     });
 
+    validateAgentResult(task, agent, result);
+
     return {
       taskId: task.id,
       agentId: agent.id,
@@ -645,27 +674,25 @@ export class TamvSovereignKernel {
     };
   }
 
+  // Persistencia: un archivo por workflow
   async persistWorkflow(workflowState) {
-    const workflows = (await pathExists(this.paths.workflows))
-      ? await readJson(this.paths.workflows)
-      : {};
-    workflows[workflowState.workflowId] = workflowState;
-    await this.atomicWriteJson(this.paths.workflows, workflows);
+    const wfFile = `${WORKFLOW_FILE_PREFIX}${workflowState.workflowId}.json`;
+    const wfPath = this.secureResolve(wfFile, true);
+    await this.atomicWriteJson(wfPath, workflowState);
     return workflowState;
   }
 
   async recoverWorkflow(workflowId) {
     await this.init();
-    const workflows = (await pathExists(this.paths.workflows))
-      ? await readJson(this.paths.workflows)
-      : {};
-    const workflow = workflows[workflowId];
-    if (!workflow) {
+    const wfFile = `${WORKFLOW_FILE_PREFIX}${workflowId}.json`;
+    const wfPath = this.secureResolve(wfFile, true);
+    if (!(await pathExists(wfPath))) {
       throw new Error(
         `TAMV-CRITICAL: Workflow extraviado en la federación: ${workflowId}`,
       );
     }
-    return workflow;
+    const raw = await readFile(wfPath, 'utf8');
+    return JSON.parse(raw);
   }
 
   async dispatchPlanForLatestEvent() {
