@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { FEDERATIONS, type FederationId } from "@/lib/ecosystem/contracts";
-import { reposByFederation } from "@/lib/ecosystem/manifest";
+import { reposByFederation, type Repo } from "@/lib/ecosystem/manifest";
 import { EventStream } from "@/components/tamv/EventStream";
 import { useKernelStatus } from "@/hooks/use-kernel-status";
 import { Header } from "@/components/tamv/Header";
@@ -59,7 +59,7 @@ function FederationView() {
         <section className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
           <PanelShell title="Repos federados" subtitle="Contratos consumidos y eventos emitidos">
             <ul className="divide-y divide-white/5">
-              {repos.map((r) => (
+              {repos.map((r: Repo) => (
                 <li key={r.slug} className="py-3">
                   <div className="flex items-baseline justify-between gap-3">
                     <a
@@ -76,12 +76,12 @@ function FederationView() {
                   </div>
                   <p className="text-xs text-zinc-400 mt-1">{r.summary}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-mono">
-                    {r.consumes.map((c) => (
+                    {r.consumes.map((c: string) => (
                       <span key={c} className="rounded border border-white/10 px-1.5 py-0.5 text-zinc-500">
                         ← {c}
                       </span>
                     ))}
-                    {r.emits.map((e) => (
+                    {r.emits.map((e: string) => (
                       <span
                         key={e}
                         className="rounded border border-emerald-500/30 px-1.5 py-0.5 text-emerald-300/80"
