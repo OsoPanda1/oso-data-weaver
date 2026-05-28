@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildEnrichedManifest } from "@/lib/integrations/ecosystem.functions";
+import { saveManifestSnapshot } from "@/lib/integrations/manifest-snapshots";
 
 /**
- * Manifest público enriquecido del ecosistema TAMV.
- * Fuente única de verdad consumible por cualquier repo del ecosistema,
- * con telemetría viva de GitHub + estado de identidad académica.
+ * Manifest publico enriquecido del ecosistema TAMV.
+ * Fuente unica de verdad consumible por cualquier repo del ecosistema,
+ * con telemetria viva de GitHub + estado de identidad academica.
  */
 export const Route = createFileRoute("/api/public/manifest")({
   server: {
@@ -12,12 +13,15 @@ export const Route = createFileRoute("/api/public/manifest")({
       GET: async () => {
         try {
           const body = await buildEnrichedManifest();
-          return new Response(JSON.stringify(body, null, 2), {
+          const snapshot = await saveManifestSnapshot(body);
+          return new Response(JSON.stringify({ ...body, snapshot }, null, 2), {
             status: 200,
             headers: {
               "Content-Type": "application/json; charset=utf-8",
               "Cache-Control": "public, max-age=120",
               "Access-Control-Allow-Origin": "*",
+              "X-TAMV-Manifest-Snapshot": snapshot.id,
+              "X-TAMV-Manifest-SHA256": snapshot.sha256,
             },
           });
         } catch (err) {
