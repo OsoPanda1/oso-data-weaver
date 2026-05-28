@@ -6,6 +6,7 @@ const NAV = [
   { to: "/repos", label: "Repos" },
   { to: "/contracts", label: "Contratos" },
   { to: "/bookpi", label: "BookPI" },
+  { to: "/config", label: "Config" },
 ] as const;
 
 export function Header() {
