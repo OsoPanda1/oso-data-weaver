@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReposRouteImport } from './routes/repos'
 import { Route as ContractsRouteImport } from './routes/contracts'
 import { Route as BookpiRouteImport } from './routes/bookpi'
 import { Route as AtlasRouteImport } from './routes/atlas'
@@ -16,6 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FederationsIdRouteImport } from './routes/federations.$id'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 
+const ReposRoute = ReposRouteImport.update({
+  id: '/repos',
+  path: '/repos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContractsRoute = ContractsRouteImport.update({
   id: '/contracts',
   path: '/contracts',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
   '/contracts': typeof ContractsRoute
+  '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
   '/contracts': typeof ContractsRoute
+  '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
   '/contracts': typeof ContractsRoute
+  '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/atlas'
     | '/bookpi'
     | '/contracts'
+    | '/repos'
     | '/federations/$id'
     | '/api/public/manifest'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/atlas'
     | '/bookpi'
     | '/contracts'
+    | '/repos'
     | '/federations/$id'
     | '/api/public/manifest'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/atlas'
     | '/bookpi'
     | '/contracts'
+    | '/repos'
     | '/federations/$id'
     | '/api/public/manifest'
   fileRoutesById: FileRoutesById
@@ -104,12 +116,20 @@ export interface RootRouteChildren {
   AtlasRoute: typeof AtlasRoute
   BookpiRoute: typeof BookpiRoute
   ContractsRoute: typeof ContractsRoute
+  ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/repos': {
+      id: '/repos'
+      path: '/repos'
+      fullPath: '/repos'
+      preLoaderRoute: typeof ReposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contracts': {
       id: '/contracts'
       path: '/contracts'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AtlasRoute: AtlasRoute,
   BookpiRoute: BookpiRoute,
   ContractsRoute: ContractsRoute,
+  ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
 }
