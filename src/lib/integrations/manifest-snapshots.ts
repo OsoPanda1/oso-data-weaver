@@ -91,9 +91,28 @@ export async function readManifestSnapshot(id: string): Promise<any> {
   return JSON.parse(await readFile(entry.path, "utf8"));
 }
 
-export function diffManifestSnapshots(before: any, after: any) {
-  const beforeRepos = new Map((before?.repos ?? []).map((repo: any) => [repo.slug, repo]));
-  const afterRepos = new Map((after?.repos ?? []).map((repo: any) => [repo.slug, repo]));
+export interface ManifestDiff {
+  before: string | null;
+  after: string | null;
+  added: string[];
+  removed: string[];
+  changed: string[];
+  counts: {
+    beforeRepos: number;
+    afterRepos: number;
+    added: number;
+    removed: number;
+    changed: number;
+  };
+}
+
+export function diffManifestSnapshots(before: any, after: any): ManifestDiff {
+  const beforeRepos = new Map<string, any>(
+    (before?.repos ?? []).map((repo: any) => [repo.slug as string, repo]),
+  );
+  const afterRepos = new Map<string, any>(
+    (after?.repos ?? []).map((repo: any) => [repo.slug as string, repo]),
+  );
   const added = [...afterRepos.keys()].filter((slug) => !beforeRepos.has(slug));
   const removed = [...beforeRepos.keys()].filter((slug) => !afterRepos.has(slug));
   const changed = [...afterRepos.keys()].filter((slug) => {

@@ -38,10 +38,16 @@ const GithubEventSchema = z.object({
   createdAt: z.string().or(z.number()).optional(),
 }).passthrough();
 
+type GithubEventLatest = {
+  repository?: { full_name?: string };
+  timestamp?: string | number;
+  createdAt?: string | number;
+};
+
 interface GithubWebhookStatus {
   configured: boolean;
   eventCount: number;
-  latest: z.infer<typeof GithubEventSchema> | null;
+  latest: GithubEventLatest | null;
   repositories: string[];
 }
 
@@ -138,26 +144,23 @@ const withBookPiTelemetry = (hexagon: string, federationId?: FederationId) =>
 // --- 4. EXPORTACIÓN DE FUNCIONES DE SERVIDOR ---
 
 export const validateOpenScienceStatus = createServerFn({ method: "GET" })
-  .middleware([withBookPiTelemetry("open-science", "FED_ACADEMICA")])
+  .middleware([withBookPiTelemetry("open-science", "central")])
   .handler(async () => {
-    // La integración con ORCID, Zenodo y Figshare se procesa aquí
     const result = await validateOpenScienceIntegrations();
     return result;
   });
 
 export const getManifestSnapshotHistory = createServerFn({ method: "GET" })
-  .middleware([withBookPiTelemetry("manifest-ledger", "FED_SISTEMAS")])
+  .middleware([withBookPiTelemetry("manifest-ledger", "central")])
   .handler(async () => {
     const snapshots = await listManifestSnapshots();
-    // Paginación defensiva in-memory para prevenir saturación de ancho de banda
     return snapshots.slice(0, 100);
   });
 
 export const compareManifestSnapshots = createServerFn({ method: "GET" })
-  .middleware([withBookPiTelemetry("manifest-diff", "FED_SISTEMAS")])
-  .validator(CompareSnapshotsInputSchema)
-  .handler(async ({ data }) => {
-    // I/O en paralelo estricto: no esperar secuencialmente por archivos que existen en disco/red
+  .middleware([withBookPiTelemetry("manifest-diff", "central")])
+  .inputValidator(CompareSnapshotsInputSchema)
+  .handler(async ({ data }: { data: CompareSnapshotsInput }) => {
     const [before, after] = await Promise.all([
       readManifestSnapshot(data.before),
       readManifestSnapshot(data.after),
@@ -176,26 +179,25 @@ export const compareManifestSnapshots = createServerFn({ method: "GET" })
   });
 
 export const getGithubWebhookStatus = createServerFn({ method: "GET" })
-  .middleware([withBookPiTelemetry("github-webhooks", "FED_DEVOPS")])
+  .middleware([withBookPiTelemetry("github-webhooks", "ops")])
   .handler(async (): Promise<GithubWebhookStatus> => {
     const isConfigured = Boolean(process.env.GITHUB_WEBHOOK_SECRET);
     const rawEvents = await listGithubWebhookEvents();
 
-    let latestEvent: z.infer<typeof GithubEventSchema> | null = null;
+    let latestEvent: GithubEventLatest | null = null;
     let latestTime = 0;
     const reposSet = new Set<string>();
 
-    // Procesamiento O(n): Un solo ciclo de reloj para calcular el estado global
     for (const rawEvent of rawEvents) {
       const parsed = GithubEventSchema.safeParse(rawEvent);
-      if (!parsed.success) continue; // Resiliencia ante mutaciones no anunciadas de la API externa
+      if (!parsed.success) continue;
 
-      const event = parsed.data;
+      const event = parsed.data as GithubEventLatest;
       const repoName = event.repository?.full_name;
       if (repoName) reposSet.add(repoName);
 
       const rawTime = event.timestamp ?? event.createdAt ?? 0;
-      const eventTime = new Date(rawTime).getTime();
+      const eventTime = new Date(rawTime as string | number).getTime();
 
       if (eventTime > latestTime) {
         latestTime = eventTime;

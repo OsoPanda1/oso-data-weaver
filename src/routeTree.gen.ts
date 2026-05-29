@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReposRouteImport } from './routes/repos'
+import { Route as Mdx5RouteImport } from './routes/mdx5'
+import { Route as KorimaRouteImport } from './routes/korima'
+import { Route as EoctRouteImport } from './routes/eoct'
 import { Route as ContractsRouteImport } from './routes/contracts'
 import { Route as ConfigRouteImport } from './routes/config'
 import { Route as BookpiRouteImport } from './routes/bookpi'
@@ -26,6 +29,21 @@ import { Route as ApiGithubEventsStreamRouteImport } from './routes/api/github/e
 const ReposRoute = ReposRouteImport.update({
   id: '/repos',
   path: '/repos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Mdx5Route = Mdx5RouteImport.update({
+  id: '/mdx5',
+  path: '/mdx5',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KorimaRoute = KorimaRouteImport.update({
+  id: '/korima',
+  path: '/korima',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EoctRoute = EoctRouteImport.update({
+  id: '/eoct',
+  path: '/eoct',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContractsRoute = ContractsRouteImport.update({
@@ -97,6 +115,9 @@ export interface FileRoutesByFullPath {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
+  '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -112,6 +133,9 @@ export interface FileRoutesByTo {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
+  '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -128,6 +152,9 @@ export interface FileRoutesById {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
+  '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -145,6 +172,9 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
+    | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -160,6 +190,9 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
+    | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -175,6 +208,9 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
+    | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -191,6 +227,9 @@ export interface RootRouteChildren {
   BookpiRoute: typeof BookpiRoute
   ConfigRoute: typeof ConfigRoute
   ContractsRoute: typeof ContractsRoute
+  EoctRoute: typeof EoctRoute
+  KorimaRoute: typeof KorimaRoute
+  Mdx5Route: typeof Mdx5Route
   ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
   ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
@@ -205,6 +244,27 @@ declare module '@tanstack/react-router' {
       path: '/repos'
       fullPath: '/repos'
       preLoaderRoute: typeof ReposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mdx5': {
+      id: '/mdx5'
+      path: '/mdx5'
+      fullPath: '/mdx5'
+      preLoaderRoute: typeof Mdx5RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/korima': {
+      id: '/korima'
+      path: '/korima'
+      fullPath: '/korima'
+      preLoaderRoute: typeof KorimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eoct': {
+      id: '/eoct'
+      path: '/eoct'
+      fullPath: '/eoct'
+      preLoaderRoute: typeof EoctRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contracts': {
@@ -325,6 +385,9 @@ const rootRouteChildren: RootRouteChildren = {
   BookpiRoute: BookpiRoute,
   ConfigRoute: ConfigRoute,
   ContractsRoute: ContractsRoute,
+  EoctRoute: EoctRoute,
+  KorimaRoute: KorimaRoute,
+  Mdx5Route: Mdx5Route,
   ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
   ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
@@ -334,13 +397,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

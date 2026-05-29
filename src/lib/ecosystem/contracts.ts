@@ -15,13 +15,32 @@ export type FederationId =
   | "logistics"
   | "users";
 
+export type HeHexagonId =
+  | "HE-Ingest"
+  | "HE-Transform"
+  | "HE-Publish"
+  | "HE-Science"
+  | "HE-Economy"
+  | "HE-Identity";
+
+export type HepDomainId =
+  | "HEP-1"
+  | "HEP-2"
+  | "HEP-3"
+  | "HEP-4"
+  | "HEP-5"
+  | "HEP-6"
+  | "HEP-7";
+
 export interface Federation {
   id: FederationId;
   name: string;
-  sigil: string;       // glifo unicode
-  color: string;       // var name
+  sigil: string;
+  color: string;
   mission: string;
-  domain: string;      // ámbito doctrinal
+  domain: HepDomainId;
+  hexagon: HeHexagonId;
+  domainDescription: string;
 }
 
 export const FEDERATIONS: Record<FederationId, Federation> = {
@@ -31,7 +50,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "◉",
     color: "var(--fed-central)",
     mission: "Kernel MD-X4 · Router heptafederado · BookPI · Contratos.",
-    domain: "Gobernanza, identidad simbólica, ledger soberano.",
+    domain: "HEP-1",
+    hexagon: "HE-Publish",
+    domainDescription: "Gobernanza, identidad simbólica, ledger soberano.",
   },
   ops: {
     id: "ops",
@@ -39,7 +60,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "△",
     color: "var(--fed-ops)",
     mission: "Orquestación de pipelines, despliegue, observabilidad.",
-    domain: "CI/CD, eventos vivos, telemetría XR/4D.",
+    domain: "HEP-2",
+    hexagon: "HE-Transform",
+    domainDescription: "CI/CD, eventos vivos, telemetría XR/4D.",
   },
   infra: {
     id: "infra",
@@ -47,7 +70,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "▤",
     color: "var(--fed-infra)",
     mission: "Hardware, edge, federación de cómputo, territorio digital.",
-    domain: "Nodo Cero RDM, gemelos digitales, infraestructura física.",
+    domain: "HEP-3",
+    hexagon: "HE-Ingest",
+    domainDescription: "Nodo Cero RDM, gemelos digitales, infraestructura física.",
   },
   security: {
     id: "security",
@@ -55,7 +80,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "✦",
     color: "var(--fed-security)",
     mission: "Guardianías, sigilos, validación criptográfica, GoS.",
-    domain: "Soberanía, anti-fragilidad, control de acceso.",
+    domain: "HEP-4",
+    hexagon: "HE-Transform",
+    domainDescription: "Soberanía, anti-fragilidad, control de acceso.",
   },
   finance: {
     id: "finance",
@@ -63,7 +90,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "◈",
     color: "var(--fed-finance)",
     mission: "Economía interna, reputación, límites, valor circulante.",
-    domain: "Ledger económico, recálculo automático por eventos.",
+    domain: "HEP-5",
+    hexagon: "HE-Economy",
+    domainDescription: "Ledger económico, recálculo automático por eventos.",
   },
   logistics: {
     id: "logistics",
@@ -71,7 +100,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "◇",
     color: "var(--fed-logistics)",
     mission: "Turismo digital, rutas, distribución de experiencias.",
-    domain: "Real del Monte turismo, mapas operativos.",
+    domain: "HEP-6",
+    hexagon: "HE-Publish",
+    domainDescription: "Real del Monte turismo, mapas operativos.",
   },
   users: {
     id: "users",
@@ -79,7 +110,9 @@ export const FEDERATIONS: Record<FederationId, Federation> = {
     sigil: "◎",
     color: "var(--fed-users)",
     mission: "Identidad, perfil, educación, comunidad UTAMV.",
-    domain: "Campus, masterclass, identidad de alumnos y maestros.",
+    domain: "HEP-7",
+    hexagon: "HE-Identity",
+    domainDescription: "Campus, masterclass, identidad de alumnos y maestros.",
   },
 };
 
