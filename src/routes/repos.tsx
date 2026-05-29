@@ -124,7 +124,7 @@ function ReposView() {
               {filteredRepos.map((r) => {
                 const gh = liveBySlug.get(r.slug.toLowerCase());
                 const fed = FEDERATIONS[r.federation];
-                const latestWebhookRepo = webhooks.data?.latest?.repository?.name?.toLowerCase() === r.slug.toLowerCase();
+                const latestWebhookRepo = webhooks.data?.latest?.repository?.full_name?.toLowerCase().endsWith("/" + r.slug.toLowerCase()) ?? false;
                 return (
                   <tr key={r.slug} className={latestWebhookRepo ? "bg-emerald-400/5" : "hover:bg-white/5"}>
                     <td className="px-4 py-3">
