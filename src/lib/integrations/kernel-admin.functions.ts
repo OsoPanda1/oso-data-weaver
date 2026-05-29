@@ -42,7 +42,6 @@ type GithubEventLatest = {
   repository?: { full_name?: string };
   timestamp?: string | number;
   createdAt?: string | number;
-  [key: string]: unknown;
 };
 
 interface GithubWebhookStatus {
