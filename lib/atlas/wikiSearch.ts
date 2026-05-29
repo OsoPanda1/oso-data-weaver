@@ -1,4 +1,4 @@
-import type { WikiSection } from "@/data/wikiStructure";
+import type { WikiSection } from "./data/wikiStructure";
 
 export interface WikiSearchResult {
   sectionId: string;

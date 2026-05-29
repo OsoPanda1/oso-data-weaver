@@ -1,4 +1,4 @@
-import { wikiStructure } from "@/data/wikiStructure";
+import { wikiStructure } from "./data/wikiStructure";
 
 export type WikiArticleMeta = {
   moduleIndex: number;
