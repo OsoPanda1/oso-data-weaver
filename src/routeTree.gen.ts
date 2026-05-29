@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReposRouteImport } from './routes/repos'
 import { Route as Mdx5RouteImport } from './routes/mdx5'
+import { Route as KorimaRouteImport } from './routes/korima'
+import { Route as EoctRouteImport } from './routes/eoct'
 import { Route as ContractsRouteImport } from './routes/contracts'
 import { Route as ConfigRouteImport } from './routes/config'
 import { Route as BookpiRouteImport } from './routes/bookpi'
@@ -32,6 +34,16 @@ const ReposRoute = ReposRouteImport.update({
 const Mdx5Route = Mdx5RouteImport.update({
   id: '/mdx5',
   path: '/mdx5',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KorimaRoute = KorimaRouteImport.update({
+  id: '/korima',
+  path: '/korima',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EoctRoute = EoctRouteImport.update({
+  id: '/eoct',
+  path: '/eoct',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContractsRoute = ContractsRouteImport.update({
@@ -103,6 +115,8 @@ export interface FileRoutesByFullPath {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
@@ -119,6 +133,8 @@ export interface FileRoutesByTo {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
@@ -136,6 +152,8 @@ export interface FileRoutesById {
   '/bookpi': typeof BookpiRoute
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
+  '/eoct': typeof EoctRoute
+  '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
@@ -154,6 +172,8 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
@@ -170,6 +190,8 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
@@ -186,6 +208,8 @@ export interface FileRouteTypes {
     | '/bookpi'
     | '/config'
     | '/contracts'
+    | '/eoct'
+    | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
@@ -203,6 +227,8 @@ export interface RootRouteChildren {
   BookpiRoute: typeof BookpiRoute
   ConfigRoute: typeof ConfigRoute
   ContractsRoute: typeof ContractsRoute
+  EoctRoute: typeof EoctRoute
+  KorimaRoute: typeof KorimaRoute
   Mdx5Route: typeof Mdx5Route
   ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
@@ -225,6 +251,20 @@ declare module '@tanstack/react-router' {
       path: '/mdx5'
       fullPath: '/mdx5'
       preLoaderRoute: typeof Mdx5RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/korima': {
+      id: '/korima'
+      path: '/korima'
+      fullPath: '/korima'
+      preLoaderRoute: typeof KorimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eoct': {
+      id: '/eoct'
+      path: '/eoct'
+      fullPath: '/eoct'
+      preLoaderRoute: typeof EoctRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contracts': {
@@ -345,6 +385,8 @@ const rootRouteChildren: RootRouteChildren = {
   BookpiRoute: BookpiRoute,
   ConfigRoute: ConfigRoute,
   ContractsRoute: ContractsRoute,
+  EoctRoute: EoctRoute,
+  KorimaRoute: KorimaRoute,
   Mdx5Route: Mdx5Route,
   ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
