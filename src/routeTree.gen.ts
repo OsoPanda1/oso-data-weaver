@@ -11,11 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReposRouteImport } from './routes/repos'
 import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as ConfigRouteImport } from './routes/config'
 import { Route as BookpiRouteImport } from './routes/bookpi'
 import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FederationsIdRouteImport } from './routes/federations.$id'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ApiGithubWebhookRouteImport } from './routes/api/github/webhook'
+import { Route as ApiGithubEventsRouteImport } from './routes/api/github/events'
+import { Route as ApiPublicManifestHistoryRouteImport } from './routes/api/public/manifest/history'
+import { Route as ApiPublicManifestCompareRouteImport } from './routes/api/public/manifest/compare'
+import { Route as ApiGithubEventsStreamRouteImport } from './routes/api/github/events/stream'
 
 const ReposRoute = ReposRouteImport.update({
   id: '/repos',
@@ -25,6 +31,11 @@ const ReposRoute = ReposRouteImport.update({
 const ContractsRoute = ContractsRouteImport.update({
   id: '/contracts',
   path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfigRoute = ConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookpiRoute = BookpiRouteImport.update({
@@ -52,34 +63,79 @@ const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGithubWebhookRoute = ApiGithubWebhookRouteImport.update({
+  id: '/api/github/webhook',
+  path: '/api/github/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubEventsRoute = ApiGithubEventsRouteImport.update({
+  id: '/api/github/events',
+  path: '/api/github/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicManifestHistoryRoute =
+  ApiPublicManifestHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => ApiPublicManifestRoute,
+  } as any)
+const ApiPublicManifestCompareRoute =
+  ApiPublicManifestCompareRouteImport.update({
+    id: '/compare',
+    path: '/compare',
+    getParentRoute: () => ApiPublicManifestRoute,
+  } as any)
+const ApiGithubEventsStreamRoute = ApiGithubEventsStreamRouteImport.update({
+  id: '/stream',
+  path: '/stream',
+  getParentRoute: () => ApiGithubEventsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
+  '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
-  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/github/events': typeof ApiGithubEventsRouteWithChildren
+  '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
+  '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
+  '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
-  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/github/events': typeof ApiGithubEventsRouteWithChildren
+  '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
+  '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/atlas': typeof AtlasRoute
   '/bookpi': typeof BookpiRoute
+  '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
-  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/github/events': typeof ApiGithubEventsRouteWithChildren
+  '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
+  '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,38 +143,59 @@ export interface FileRouteTypes {
     | '/'
     | '/atlas'
     | '/bookpi'
+    | '/config'
     | '/contracts'
     | '/repos'
     | '/federations/$id'
+    | '/api/github/events'
+    | '/api/github/webhook'
     | '/api/public/manifest'
+    | '/api/github/events/stream'
+    | '/api/public/manifest/compare'
+    | '/api/public/manifest/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/atlas'
     | '/bookpi'
+    | '/config'
     | '/contracts'
     | '/repos'
     | '/federations/$id'
+    | '/api/github/events'
+    | '/api/github/webhook'
     | '/api/public/manifest'
+    | '/api/github/events/stream'
+    | '/api/public/manifest/compare'
+    | '/api/public/manifest/history'
   id:
     | '__root__'
     | '/'
     | '/atlas'
     | '/bookpi'
+    | '/config'
     | '/contracts'
     | '/repos'
     | '/federations/$id'
+    | '/api/github/events'
+    | '/api/github/webhook'
     | '/api/public/manifest'
+    | '/api/github/events/stream'
+    | '/api/public/manifest/compare'
+    | '/api/public/manifest/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AtlasRoute: typeof AtlasRoute
   BookpiRoute: typeof BookpiRoute
+  ConfigRoute: typeof ConfigRoute
   ContractsRoute: typeof ContractsRoute
   ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
-  ApiPublicManifestRoute: typeof ApiPublicManifestRoute
+  ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
+  ApiGithubWebhookRoute: typeof ApiGithubWebhookRoute
+  ApiPublicManifestRoute: typeof ApiPublicManifestRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -135,6 +212,13 @@ declare module '@tanstack/react-router' {
       path: '/contracts'
       fullPath: '/contracts'
       preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/config': {
+      id: '/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookpi': {
@@ -172,17 +256,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/github/webhook': {
+      id: '/api/github/webhook'
+      path: '/api/github/webhook'
+      fullPath: '/api/github/webhook'
+      preLoaderRoute: typeof ApiGithubWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/events': {
+      id: '/api/github/events'
+      path: '/api/github/events'
+      fullPath: '/api/github/events'
+      preLoaderRoute: typeof ApiGithubEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/manifest/history': {
+      id: '/api/public/manifest/history'
+      path: '/history'
+      fullPath: '/api/public/manifest/history'
+      preLoaderRoute: typeof ApiPublicManifestHistoryRouteImport
+      parentRoute: typeof ApiPublicManifestRoute
+    }
+    '/api/public/manifest/compare': {
+      id: '/api/public/manifest/compare'
+      path: '/compare'
+      fullPath: '/api/public/manifest/compare'
+      preLoaderRoute: typeof ApiPublicManifestCompareRouteImport
+      parentRoute: typeof ApiPublicManifestRoute
+    }
+    '/api/github/events/stream': {
+      id: '/api/github/events/stream'
+      path: '/stream'
+      fullPath: '/api/github/events/stream'
+      preLoaderRoute: typeof ApiGithubEventsStreamRouteImport
+      parentRoute: typeof ApiGithubEventsRoute
+    }
   }
 }
+
+interface ApiGithubEventsRouteChildren {
+  ApiGithubEventsStreamRoute: typeof ApiGithubEventsStreamRoute
+}
+
+const ApiGithubEventsRouteChildren: ApiGithubEventsRouteChildren = {
+  ApiGithubEventsStreamRoute: ApiGithubEventsStreamRoute,
+}
+
+const ApiGithubEventsRouteWithChildren = ApiGithubEventsRoute._addFileChildren(
+  ApiGithubEventsRouteChildren,
+)
+
+interface ApiPublicManifestRouteChildren {
+  ApiPublicManifestCompareRoute: typeof ApiPublicManifestCompareRoute
+  ApiPublicManifestHistoryRoute: typeof ApiPublicManifestHistoryRoute
+}
+
+const ApiPublicManifestRouteChildren: ApiPublicManifestRouteChildren = {
+  ApiPublicManifestCompareRoute: ApiPublicManifestCompareRoute,
+  ApiPublicManifestHistoryRoute: ApiPublicManifestHistoryRoute,
+}
+
+const ApiPublicManifestRouteWithChildren =
+  ApiPublicManifestRoute._addFileChildren(ApiPublicManifestRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AtlasRoute: AtlasRoute,
   BookpiRoute: BookpiRoute,
+  ConfigRoute: ConfigRoute,
   ContractsRoute: ContractsRoute,
   ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
-  ApiPublicManifestRoute: ApiPublicManifestRoute,
+  ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
+  ApiGithubWebhookRoute: ApiGithubWebhookRoute,
+  ApiPublicManifestRoute: ApiPublicManifestRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
