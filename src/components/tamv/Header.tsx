@@ -3,6 +3,9 @@ import { Link } from "@tanstack/react-router";
 const NAV = [
   { to: "/", label: "Kernel" },
   { to: "/atlas", label: "Atlas" },
+  { to: "/mdx5", label: "MD-X5" },
+  { to: "/korima", label: "Korima" },
+  { to: "/eoct", label: "EOCT" },
   { to: "/repos", label: "Repos" },
   { to: "/contracts", label: "Contratos" },
   { to: "/bookpi", label: "BookPI" },
