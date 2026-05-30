@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReposRouteImport } from './routes/repos'
 import { Route as Mdx5RouteImport } from './routes/mdx5'
 import { Route as KorimaRouteImport } from './routes/korima'
+import { Route as KernelRouteImport } from './routes/kernel'
 import { Route as EoctRouteImport } from './routes/eoct'
 import { Route as ContractsRouteImport } from './routes/contracts'
 import { Route as ConfigRouteImport } from './routes/config'
@@ -19,11 +20,14 @@ import { Route as BookpiRouteImport } from './routes/bookpi'
 import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FederationsIdRouteImport } from './routes/federations.$id'
+import { Route as ApiPublicSystemicRouteImport } from './routes/api/public/systemic'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiGithubWebhookRouteImport } from './routes/api/github/webhook'
 import { Route as ApiGithubEventsRouteImport } from './routes/api/github/events'
 import { Route as ApiPublicManifestHistoryRouteImport } from './routes/api/public/manifest/history'
 import { Route as ApiPublicManifestCompareRouteImport } from './routes/api/public/manifest/compare'
+import { Route as ApiPublicAuditTraceIdRouteImport } from './routes/api/public/audit.$traceId'
 import { Route as ApiGithubEventsStreamRouteImport } from './routes/api/github/events/stream'
 
 const ReposRoute = ReposRouteImport.update({
@@ -39,6 +43,11 @@ const Mdx5Route = Mdx5RouteImport.update({
 const KorimaRoute = KorimaRouteImport.update({
   id: '/korima',
   path: '/korima',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KernelRoute = KernelRouteImport.update({
+  id: '/kernel',
+  path: '/kernel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EoctRoute = EoctRouteImport.update({
@@ -76,9 +85,19 @@ const FederationsIdRoute = FederationsIdRouteImport.update({
   path: '/federations/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSystemicRoute = ApiPublicSystemicRouteImport.update({
+  id: '/api/public/systemic',
+  path: '/api/public/systemic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
   path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGithubWebhookRoute = ApiGithubWebhookRouteImport.update({
@@ -103,6 +122,11 @@ const ApiPublicManifestCompareRoute =
     path: '/compare',
     getParentRoute: () => ApiPublicManifestRoute,
   } as any)
+const ApiPublicAuditTraceIdRoute = ApiPublicAuditTraceIdRouteImport.update({
+  id: '/api/public/audit/$traceId',
+  path: '/api/public/audit/$traceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGithubEventsStreamRoute = ApiGithubEventsStreamRouteImport.update({
   id: '/stream',
   path: '/stream',
@@ -116,14 +140,18 @@ export interface FileRoutesByFullPath {
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/eoct': typeof EoctRoute
+  '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
@@ -134,14 +162,18 @@ export interface FileRoutesByTo {
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/eoct': typeof EoctRoute
+  '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
@@ -153,14 +185,18 @@ export interface FileRoutesById {
   '/config': typeof ConfigRoute
   '/contracts': typeof ContractsRoute
   '/eoct': typeof EoctRoute
+  '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
 }
@@ -173,14 +209,18 @@ export interface FileRouteTypes {
     | '/config'
     | '/contracts'
     | '/eoct'
+    | '/kernel'
     | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/public/health'
     | '/api/public/manifest'
+    | '/api/public/systemic'
     | '/api/github/events/stream'
+    | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
   fileRoutesByTo: FileRoutesByTo
@@ -191,14 +231,18 @@ export interface FileRouteTypes {
     | '/config'
     | '/contracts'
     | '/eoct'
+    | '/kernel'
     | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/public/health'
     | '/api/public/manifest'
+    | '/api/public/systemic'
     | '/api/github/events/stream'
+    | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
   id:
@@ -209,14 +253,18 @@ export interface FileRouteTypes {
     | '/config'
     | '/contracts'
     | '/eoct'
+    | '/kernel'
     | '/korima'
     | '/mdx5'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/public/health'
     | '/api/public/manifest'
+    | '/api/public/systemic'
     | '/api/github/events/stream'
+    | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
   fileRoutesById: FileRoutesById
@@ -228,13 +276,17 @@ export interface RootRouteChildren {
   ConfigRoute: typeof ConfigRoute
   ContractsRoute: typeof ContractsRoute
   EoctRoute: typeof EoctRoute
+  KernelRoute: typeof KernelRoute
   KorimaRoute: typeof KorimaRoute
   Mdx5Route: typeof Mdx5Route
   ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
   ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
   ApiGithubWebhookRoute: typeof ApiGithubWebhookRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRouteWithChildren
+  ApiPublicSystemicRoute: typeof ApiPublicSystemicRoute
+  ApiPublicAuditTraceIdRoute: typeof ApiPublicAuditTraceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/korima'
       fullPath: '/korima'
       preLoaderRoute: typeof KorimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kernel': {
+      id: '/kernel'
+      path: '/kernel'
+      fullPath: '/kernel'
+      preLoaderRoute: typeof KernelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eoct': {
@@ -309,11 +368,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FederationsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/systemic': {
+      id: '/api/public/systemic'
+      path: '/api/public/systemic'
+      fullPath: '/api/public/systemic'
+      preLoaderRoute: typeof ApiPublicSystemicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/manifest': {
       id: '/api/public/manifest'
       path: '/api/public/manifest'
       fullPath: '/api/public/manifest'
       preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/github/webhook': {
@@ -343,6 +416,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/manifest/compare'
       preLoaderRoute: typeof ApiPublicManifestCompareRouteImport
       parentRoute: typeof ApiPublicManifestRoute
+    }
+    '/api/public/audit/$traceId': {
+      id: '/api/public/audit/$traceId'
+      path: '/api/public/audit/$traceId'
+      fullPath: '/api/public/audit/$traceId'
+      preLoaderRoute: typeof ApiPublicAuditTraceIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/github/events/stream': {
       id: '/api/github/events/stream'
@@ -386,14 +466,28 @@ const rootRouteChildren: RootRouteChildren = {
   ConfigRoute: ConfigRoute,
   ContractsRoute: ContractsRoute,
   EoctRoute: EoctRoute,
+  KernelRoute: KernelRoute,
   KorimaRoute: KorimaRoute,
   Mdx5Route: Mdx5Route,
   ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
   ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
   ApiGithubWebhookRoute: ApiGithubWebhookRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicManifestRoute: ApiPublicManifestRouteWithChildren,
+  ApiPublicSystemicRoute: ApiPublicSystemicRoute,
+  ApiPublicAuditTraceIdRoute: ApiPublicAuditTraceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

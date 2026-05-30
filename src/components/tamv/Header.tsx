@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
 const NAV = [
-  { to: "/", label: "Kernel" },
+  { to: "/", label: "Home" },
+  { to: "/kernel", label: "Kernel" },
   { to: "/atlas", label: "Atlas" },
   { to: "/mdx5", label: "MD-X5" },
   { to: "/korima", label: "Korima" },
