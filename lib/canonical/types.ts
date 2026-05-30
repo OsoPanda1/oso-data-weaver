@@ -104,13 +104,21 @@ export type CanonicalEventType =
   | "POLICY_EVALUATED"
   | "SNAPSHOT_CREATED";
 
-export interface CanonicalEvent<TPayload = unknown> {
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [k: string]: JsonValue };
+
+export interface CanonicalEvent {
   eventId: string;
   eventType: CanonicalEventType;
   timestamp: string;
   actorId: string;
   nodeId?: string;
-  payload: TPayload;
+  payload: { [k: string]: JsonValue };
   prevHash: string;
   eventHash: string;
   signature: string;

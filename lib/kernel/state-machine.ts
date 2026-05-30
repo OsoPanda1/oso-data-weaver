@@ -30,5 +30,5 @@ export interface KernelTrace {
   to: KernelState;
   traceId: string;
   reason?: string;
-  meta?: Record<string, unknown>;
+  meta?: Record<string, string | number | boolean | null>;
 }

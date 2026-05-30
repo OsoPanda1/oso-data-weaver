@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FEDERATIONS, HEP_DOMAINS, HE_HEXAGONS } from "@/lib/ecosystem/contracts";
+import { FEDERATIONS } from "@/lib/ecosystem/contracts";
+import { HE_HEXAGONS, HEP_DOMAINS } from "../../../../lib/contracts/elite-hehep";
 import { kernelHealth } from "@/lib/integrations/kernel.functions";
 
 /**
