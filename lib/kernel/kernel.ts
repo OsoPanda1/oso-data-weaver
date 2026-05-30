@@ -89,7 +89,7 @@ class Kernel {
         timestamp: new Date().toISOString(),
         actorId: ctx.actorId,
         nodeId: res.node.id,
-        payload: { traceId, violations: res.violations },
+        payload: { traceId, violations: JSON.parse(JSON.stringify(res.violations)) },
       });
       events.push(ev);
     }
@@ -157,7 +157,7 @@ class Kernel {
       eventType: "POLICY_EVALUATED",
       timestamp: new Date().toISOString(),
       actorId: ctx.actorId,
-      payload: { traceId, decisions, query },
+      payload: { traceId, decisions: JSON.parse(JSON.stringify(decisions)), query },
     });
 
     this.transition("AUDITING", traceId);
