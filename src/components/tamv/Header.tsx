@@ -6,6 +6,7 @@ const NAV = [
   { to: "/atlas", label: "Atlas" },
   { to: "/mdx5", label: "MD-X5" },
   { to: "/korima", label: "Korima" },
+  { to: "/rdm", label: "RDM-TOS" },
   { to: "/eoct", label: "EOCT" },
   { to: "/repos", label: "Repos" },
   { to: "/contracts", label: "Contratos" },

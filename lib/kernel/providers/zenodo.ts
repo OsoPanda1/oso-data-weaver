@@ -1,49 +1,74 @@
-import type { TAMVArtifact, TAMVProviderReference } from "../registry";
-import { asRecord, asString, HttpAcademicProvider } from "./http-provider";
+import type { TAMVArtifact, TAMVArtifactProvider } from "../../../types/kernel";
 
-function mapZenodoReference(raw: unknown): TAMVProviderReference {
-  const record = asRecord(raw);
-  const metadata = asRecord(record.metadata);
-  const links = asRecord(record.links);
-  const doi =
-    asString(record.doi) ??
-    asString(metadata.prereserve_doi) ??
-    asString(asRecord(metadata.prereserve_doi).doi);
+export interface ZenodoDepositionResponse {
+  id?: number;
+  conceptrecid?: string;
+  links?: Record<string, string>;
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface ZenodoProviderOptions {
+  accessToken?: string;
+  baseUrl?: string;
+  fetcher?: typeof fetch;
+}
+
+function normalizeBaseUrl(baseUrl: string): string {
+  return baseUrl.replace(/\/$/, "");
+}
+
+function toZenodoMetadata(artifact: TAMVArtifact): Record<string, unknown> {
   return {
-    id: String(record.id ?? record.conceptrecid ?? ""),
-    doi,
-    url: asString(links.html) ?? asString(record.url),
-    state: record.submitted === true ? "PUBLISHED" : "SYNCED",
+    title: artifact.metadata.title ?? artifact.uid,
+    description: artifact.metadata.description ?? `TAMV artifact ${artifact.uid}`,
+    upload_type: "dataset",
+    keywords: artifact.metadata.keywords,
+    creators: artifact.metadata.authors?.map((author) => ({
+      name: author.name,
+      orcid: author.orcid,
+      affiliation: author.affiliation,
+    })),
+    tamv_uid: artifact.uid,
+    git_hash: artifact.git_hash,
   };
 }
 
-export function createZenodoProvider(env: NodeJS.ProcessEnv = process.env) {
-  return new HttpAcademicProvider({
+export function createZenodoProvider(
+  options: ZenodoProviderOptions = {},
+): TAMVArtifactProvider<ZenodoDepositionResponse> {
+  const accessToken = options.accessToken ?? process.env.ZENODO_ACCESS_TOKEN;
+  const baseUrl = normalizeBaseUrl(
+    options.baseUrl ?? process.env.ZENODO_BASE_URL ?? "https://zenodo.org/api",
+  );
+  const fetcher = options.fetcher ?? fetch;
+
+  return {
     name: "zenodo",
-    baseUrl: env.ZENODO_BASE_URL ?? "https://zenodo.org",
-    token: env.ZENODO_ACCESS_TOKEN ?? env.ZENODO_API_KEY,
-    authScheme: "bearer",
-    createPath: "/api/deposit/depositions",
-    readPath: (id) => `/api/deposit/depositions/${encodeURIComponent(id)}`,
-    requiredEnv: ["ZENODO_ACCESS_TOKEN"],
-    mapUploadBody: (artifact: TAMVArtifact) => ({
-      metadata: {
-        ...artifact.metadata,
-        related_identifiers: [
-          ...((Array.isArray(artifact.metadata.related_identifiers)
-            ? artifact.metadata.related_identifiers
-            : []) as unknown[]),
-          {
-            identifier: artifact.git_hash,
-            relation: "isCompiledBy",
-            scheme: "url",
-            resource_type: "software",
-          },
-        ],
-      },
-    }),
-    mapUploadResponse: mapZenodoReference,
-  });
+    async upload(artifact: TAMVArtifact): Promise<ZenodoDepositionResponse> {
+      if (!accessToken) {
+        throw new Error("ZENODO_ACCESS_TOKEN is required to upload TAMV artifacts to Zenodo.");
+      }
+
+      const response = await fetcher(`${baseUrl}/deposit/depositions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          metadata: toZenodoMetadata(artifact),
+        }),
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Zenodo upload failed with ${response.status}: ${body}`);
+      }
+
+      return (await response.json()) as ZenodoDepositionResponse;
+    },
+  };
 }
 
-export const ZenodoProvider = createZenodoProvider();
+export const zenodoProvider = createZenodoProvider();
