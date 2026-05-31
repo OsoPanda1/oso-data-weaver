@@ -5,7 +5,7 @@ export interface EliteHeHepHeader {
   createdAt: string;
   source: string;
   repository: string;
-  protocol: string;
+  protocol: string; // p.ej. 'tamv-federation-v1' o variante
   type: string;
   he_hep_context: HeHepContext;
 }
@@ -23,7 +23,9 @@ export interface EliteHeHepEvent<TPayload = unknown, TMeta = unknown> {
 }
 
 export interface BookPiTransport<TPayload = unknown, TMeta = unknown> {
-  publish(event: EliteHeHepEvent<TPayload, TMeta>): Promise<EliteHeHepEvent<TPayload, TMeta>>;
+  publish(
+    event: EliteHeHepEvent<TPayload, TMeta>,
+  ): Promise<EliteHeHepEvent<TPayload, TMeta>>;
 }
 
 export interface BookPiLedgerProjection {
@@ -31,5 +33,5 @@ export interface BookPiLedgerProjection {
   eventTypes: Record<string, number>;
   domains: Record<string, number>;
   hexagons: Record<string, number>;
-  latestEvent?: EliteHeHepEvent;
+  latestEvent?: EliteHeHepEvent | null;
 }
