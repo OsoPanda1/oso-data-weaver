@@ -21,7 +21,10 @@ import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FederationsIdRouteImport } from './routes/federations.$id'
 import { Route as ApiPublicSystemicRouteImport } from './routes/api/public/systemic'
+import { Route as ApiPublicStoresRouteImport } from './routes/api/public/stores'
+import { Route as ApiPublicQueryRouteImport } from './routes/api/public/query'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiGithubWebhookRouteImport } from './routes/api/github/webhook'
 import { Route as ApiGithubEventsRouteImport } from './routes/api/github/events'
@@ -90,9 +93,24 @@ const ApiPublicSystemicRoute = ApiPublicSystemicRouteImport.update({
   path: '/api/public/systemic',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStoresRoute = ApiPublicStoresRouteImport.update({
+  id: '/api/public/stores',
+  path: '/api/public/stores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicQueryRoute = ApiPublicQueryRouteImport.update({
+  id: '/api/public/query',
+  path: '/api/public/query',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
   path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
@@ -148,7 +166,10 @@ export interface FileRoutesByFullPath {
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/query': typeof ApiPublicQueryRoute
+  '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
@@ -170,7 +191,10 @@ export interface FileRoutesByTo {
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/query': typeof ApiPublicQueryRoute
+  '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
@@ -193,7 +217,10 @@ export interface FileRoutesById {
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
+  '/api/public/query': typeof ApiPublicQueryRoute
+  '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
@@ -217,7 +244,10 @@ export interface FileRouteTypes {
     | '/api/github/events'
     | '/api/github/webhook'
     | '/api/public/health'
+    | '/api/public/ingest'
     | '/api/public/manifest'
+    | '/api/public/query'
+    | '/api/public/stores'
     | '/api/public/systemic'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
@@ -239,7 +269,10 @@ export interface FileRouteTypes {
     | '/api/github/events'
     | '/api/github/webhook'
     | '/api/public/health'
+    | '/api/public/ingest'
     | '/api/public/manifest'
+    | '/api/public/query'
+    | '/api/public/stores'
     | '/api/public/systemic'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
@@ -261,7 +294,10 @@ export interface FileRouteTypes {
     | '/api/github/events'
     | '/api/github/webhook'
     | '/api/public/health'
+    | '/api/public/ingest'
     | '/api/public/manifest'
+    | '/api/public/query'
+    | '/api/public/stores'
     | '/api/public/systemic'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
@@ -284,7 +320,10 @@ export interface RootRouteChildren {
   ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
   ApiGithubWebhookRoute: typeof ApiGithubWebhookRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRouteWithChildren
+  ApiPublicQueryRoute: typeof ApiPublicQueryRoute
+  ApiPublicStoresRoute: typeof ApiPublicStoresRoute
   ApiPublicSystemicRoute: typeof ApiPublicSystemicRoute
   ApiPublicAuditTraceIdRoute: typeof ApiPublicAuditTraceIdRoute
 }
@@ -375,11 +414,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSystemicRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stores': {
+      id: '/api/public/stores'
+      path: '/api/public/stores'
+      fullPath: '/api/public/stores'
+      preLoaderRoute: typeof ApiPublicStoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/query': {
+      id: '/api/public/query'
+      path: '/api/public/query'
+      fullPath: '/api/public/query'
+      preLoaderRoute: typeof ApiPublicQueryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/manifest': {
       id: '/api/public/manifest'
       path: '/api/public/manifest'
       fullPath: '/api/public/manifest'
       preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/health': {
@@ -474,7 +534,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
   ApiGithubWebhookRoute: ApiGithubWebhookRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicManifestRoute: ApiPublicManifestRouteWithChildren,
+  ApiPublicQueryRoute: ApiPublicQueryRoute,
+  ApiPublicStoresRoute: ApiPublicStoresRoute,
   ApiPublicSystemicRoute: ApiPublicSystemicRoute,
   ApiPublicAuditTraceIdRoute: ApiPublicAuditTraceIdRoute,
 }
