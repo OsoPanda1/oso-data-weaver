@@ -2,39 +2,295 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://tamv.local/protocol/tamv-federation-v1.schema.json",
   "title": "TAMV Federation Node Manifest",
+  "description": "Manifiesto canónico de un nodo de la federación TAMV MD-X4 / DM-X4",
   "type": "object",
   "additionalProperties": false,
-  "required": ["protocol", "nodeId", "repository", "role", "version", "capabilities", "channels", "state"],
+
+  "required": [
+    "protocol",
+    "nodeId",
+    "repository",
+    "role",
+    "version",
+    "capabilities",
+    "channels",
+    "state",
+    "identity",
+    "heptafederation",
+    "security",
+    "observability",
+    "canon"
+  ],
+
   "properties": {
-    "protocol": { "const": "tamv-federation-v1" },
-    "nodeId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,120}$" },
-    "repository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+    "protocol": {
+      "const": "tamv-federation-v1"
+    },
+
+    "nodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{2,120}$",
+      "description": "Identificador único del nodo dentro de la federación (ej. nodo-cero-rdm, nodo-labs, nodo-isla-1)"
+    },
+
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+      "description": "Repositorio de referencia en formato owner/repo (GitHub, GitLab, etc.)"
+    },
+
     "role": {
       "type": "string",
-      "enum": ["kernel", "orchestrator", "core-engine", "api", "frontend", "geometry", "print", "knowledge", "asset", "agent", "documentation", "data", "product"]
+      "enum": [
+        "kernel",
+        "orchestrator",
+        "core-engine",
+        "api",
+        "frontend",
+        "geometry",
+        "print",
+        "knowledge",
+        "asset",
+        "agent",
+        "documentation",
+        "data",
+        "product",
+        "territorial-node",
+        "xr-node"
+      ]
     },
-    "version": { "type": "string" },
-    "description": { "type": "string" },
-    "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+
+    "version": {
+      "type": "string",
+      "description": "Versión semántica del nodo (ej. 0.1.0-rc.1)"
+    },
+
+    "description": {
+      "type": "string"
+    },
+
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Capacidades declaradas (ej. bookpi-ledger, citemesh-router, isabella-gateway, msr-bridge)"
+    },
+
     "channels": {
       "type": "object",
       "additionalProperties": false,
       "required": ["publishes", "subscribes"],
       "properties": {
-        "publishes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
-        "subscribes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        "publishes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true,
+          "description": "Temas/eventos que este nodo emite (ej. tamv.canon.updated, tamv.metrics.x4)"
+        },
+        "subscribes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true,
+          "description": "Temas/eventos a los que este nodo se suscribe"
+        }
       }
     },
+
     "state": {
       "type": "object",
       "additionalProperties": false,
       "required": ["mode", "persistence", "heartbeat"],
       "properties": {
-        "mode": { "enum": ["active", "passive", "planned"] },
-        "persistence": { "type": "string" },
-        "heartbeat": { "type": "string" }
+        "mode": {
+          "enum": ["active", "passive", "planned", "island"],
+          "description": "Estado operativo actual del nodo"
+        },
+        "persistence": {
+          "type": "string",
+          "description": "Estrategia de persistencia (ej. ledger-linked, local-only, crdt-mirror)"
+        },
+        "heartbeat": {
+          "type": "string",
+          "description": "Cadencia de heartbeat (ej. 5s, 30s, off-chain)"
+        }
       }
     },
-    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+
+    "links": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "URLs relevantes (docs, dashboards, paneles de control, etc.)"
+    },
+
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["did", "type", "owner"],
+      "properties": {
+        "did": {
+          "type": "string",
+          "description": "Decentralized Identifier (DID) del nodo"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["sovereign-node", "community-node", "lab-node", "experimental-node"]
+        },
+        "owner": {
+          "type": "string",
+          "description": "Entidad responsable del nodo (persona, colectivo, institución)"
+        },
+        "contact": {
+          "type": "string",
+          "description": "Información de contacto (correo, URL, etc.)"
+        }
+      }
+    },
+
+    "heptafederation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layers", "primaryLayer"],
+      "properties": {
+        "primaryLayer": {
+          "type": "string",
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5",
+            "L6",
+            "L7"
+          ],
+          "description": "Capa principal de operación de este nodo dentro de la heptafederación MD-X4"
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "name", "role"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7"]
+              },
+              "name": { "type": "string" },
+              "role": { "type": "string" },
+              "modules": {
+                "type": "array",
+                "items": { "type": "string" },
+                "uniqueItems": true
+              }
+            }
+          },
+          "description": "Conjunto de capas MD-X4 que este nodo implementa parcial o totalmente"
+        }
+      }
+    },
+
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "features"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["core", "enhanced", "hardened", "military-grade"]
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "anubis-sentinel",
+              "horus-watch",
+              "waf",
+              "ids",
+              "ips",
+              "rate-limit",
+              "csrf-protection",
+              "pqc-ready",
+              "ledger-signed"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["logging", "metrics", "tracing"],
+      "properties": {
+        "logging": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider", "level"],
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": ["pino", "winston", "bunyan"]
+            },
+            "level": {
+              "type": "string",
+              "enum": ["debug", "info", "warn", "error"]
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "export"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "export": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["prometheus", "otlp", "none"]
+              },
+              "uniqueItems": true
+            }
+          }
+        },
+        "tracing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "sampler"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "sampler": {
+              "type": "string",
+              "enum": [
+                "always_on",
+                "always_off",
+                "parentbased_always_on",
+                "ratio"
+              ]
+            }
+          }
+        }
+      }
+    },
+
+    "canon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rootVersion", "alignment"],
+      "properties": {
+        "rootVersion": {
+          "type": "string",
+          "description": "Versión del Root Canon a la que se adhiere este nodo (ej. RC-0.1α)"
+        },
+        "alignment": {
+          "type": "string",
+          "enum": ["strict", "compatible", "experimental"],
+          "description": "Nivel de alineación con el Root Canon"
+        }
+      }
+    }
   }
 }
