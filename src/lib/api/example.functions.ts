@@ -1,22 +1,35 @@
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { createServerFn } from '@tanstack/react-start';
+import { z } from 'zod';
 
-import { getServerConfig } from "../config.server";
+import { getServerConfig } from '../config.server';
 
-// Example createServerFn. Server-side handler invoked from the client:
-//   const result = await getGreeting({ data: { name: "Ada" } })
-// The .handler body runs server-only — imports used only inside it (like
-// .server.ts modules) are tree-shaken from the client bundle. Module-level
-// code here still ships to the client; for truly server-only helpers, put
-// them in a .server.ts file. Use this pattern instead of Supabase Edge
-// Functions for server logic.
+// Ejemplo de server function tipada y validada con Zod.
+// Se puede invocar en el cliente con:
+//   const fn = useServerFn(getGreeting);
+//   const data = await fn({ data: { name: 'Ada' } });
 
-export const getGreeting = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ name: z.string().min(1) }))
-  .handler(async ({ data }) => {
+const InputSchema = z.object({
+  name: z.string().min(1, 'name is required'),
+});
+
+const OutputSchema = z.object({
+  greeting: z.string(),
+  mode: z.string(),
+});
+
+export type GetGreetingInput = z.infer<typeof InputSchema>;
+export type GetGreetingOutput = z.infer<typeof OutputSchema>;
+
+export const getGreeting = createServerFn({ method: 'POST' })
+  .inputValidator(InputSchema)
+  .handler(async ({ data }): Promise<GetGreetingOutput> => {
     const config = getServerConfig();
-    return {
+
+    const result = {
       greeting: `Hello, ${data.name}!`,
-      mode: config.nodeEnv ?? "unknown",
+      mode: config.nodeEnv ?? 'unknown',
     };
+
+    // Validar también la salida para asegurar contrato estable
+    return OutputSchema.parse(result);
   });
