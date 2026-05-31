@@ -42,6 +42,8 @@ import { Route as ApiRdmAiAskRouteImport } from './routes/api/rdm/ai/ask'
 import { Route as ApiPublicManifestHistoryRouteImport } from './routes/api/public/manifest/history'
 import { Route as ApiPublicManifestCompareRouteImport } from './routes/api/public/manifest/compare'
 import { Route as ApiPublicAuditTraceIdRouteImport } from './routes/api/public/audit.$traceId'
+import { Route as ApiKernelArtifactsSyncRouteImport } from './routes/api/kernel/artifacts/sync'
+import { Route as ApiKernelArtifactsAuditRouteImport } from './routes/api/kernel/artifacts/audit'
 import { Route as ApiGithubEventsStreamRouteImport } from './routes/api/github/events/stream'
 
 const ReposRoute = ReposRouteImport.update({
@@ -211,6 +213,16 @@ const ApiPublicAuditTraceIdRoute = ApiPublicAuditTraceIdRouteImport.update({
   path: '/api/public/audit/$traceId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKernelArtifactsSyncRoute = ApiKernelArtifactsSyncRouteImport.update({
+  id: '/api/kernel/artifacts/sync',
+  path: '/api/kernel/artifacts/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKernelArtifactsAuditRoute = ApiKernelArtifactsAuditRouteImport.update({
+  id: '/api/kernel/artifacts/audit',
+  path: '/api/kernel/artifacts/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGithubEventsStreamRoute = ApiGithubEventsStreamRouteImport.update({
   id: '/stream',
   path: '/stream',
@@ -243,6 +255,8 @@ export interface FileRoutesByFullPath {
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/kernel/artifacts/audit': typeof ApiKernelArtifactsAuditRoute
+  '/api/kernel/artifacts/sync': typeof ApiKernelArtifactsSyncRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
@@ -279,6 +293,8 @@ export interface FileRoutesByTo {
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/kernel/artifacts/audit': typeof ApiKernelArtifactsAuditRoute
+  '/api/kernel/artifacts/sync': typeof ApiKernelArtifactsSyncRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
@@ -316,6 +332,8 @@ export interface FileRoutesById {
   '/api/public/systemic': typeof ApiPublicSystemicRoute
   '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
+  '/api/kernel/artifacts/audit': typeof ApiKernelArtifactsAuditRoute
+  '/api/kernel/artifacts/sync': typeof ApiKernelArtifactsSyncRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
@@ -354,6 +372,8 @@ export interface FileRouteTypes {
     | '/api/public/systemic'
     | '/api/rdm/manifest'
     | '/api/github/events/stream'
+    | '/api/kernel/artifacts/audit'
+    | '/api/kernel/artifacts/sync'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
@@ -390,6 +410,8 @@ export interface FileRouteTypes {
     | '/api/public/systemic'
     | '/api/rdm/manifest'
     | '/api/github/events/stream'
+    | '/api/kernel/artifacts/audit'
+    | '/api/kernel/artifacts/sync'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
@@ -426,6 +448,8 @@ export interface FileRouteTypes {
     | '/api/public/systemic'
     | '/api/rdm/manifest'
     | '/api/github/events/stream'
+    | '/api/kernel/artifacts/audit'
+    | '/api/kernel/artifacts/sync'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
@@ -702,6 +726,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/audit/$traceId'
       fullPath: '/api/public/audit/$traceId'
       preLoaderRoute: typeof ApiPublicAuditTraceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/kernel/artifacts/sync': {
+      id: '/api/kernel/artifacts/sync'
+      path: '/api/kernel/artifacts/sync'
+      fullPath: '/api/kernel/artifacts/sync'
+      preLoaderRoute: typeof ApiKernelArtifactsSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/kernel/artifacts/audit': {
+      id: '/api/kernel/artifacts/audit'
+      path: '/api/kernel/artifacts/audit'
+      fullPath: '/api/kernel/artifacts/audit'
+      preLoaderRoute: typeof ApiKernelArtifactsAuditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/github/events/stream': {
