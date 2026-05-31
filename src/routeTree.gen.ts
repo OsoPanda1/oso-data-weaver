@@ -28,6 +28,9 @@ import { Route as ApiPublicQueryRouteImport } from './routes/api/public/query'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiKernelSyncRouteImport } from './routes/api/kernel/sync'
+import { Route as ApiKernelCronRouteImport } from './routes/api/kernel/cron'
+import { Route as ApiKernelAuditRouteImport } from './routes/api/kernel/audit'
 import { Route as ApiGithubWebhookRouteImport } from './routes/api/github/webhook'
 import { Route as ApiGithubEventsRouteImport } from './routes/api/github/events'
 import { Route as ApiRdmWebhooksStripeRouteImport } from './routes/api/rdm/webhooks/stripe'
@@ -136,6 +139,21 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKernelSyncRoute = ApiKernelSyncRouteImport.update({
+  id: '/api/kernel/sync',
+  path: '/api/kernel/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKernelCronRoute = ApiKernelCronRouteImport.update({
+  id: '/api/kernel/cron',
+  path: '/api/kernel/cron',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKernelAuditRoute = ApiKernelAuditRouteImport.update({
+  id: '/api/kernel/audit',
+  path: '/api/kernel/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGithubWebhookRoute = ApiGithubWebhookRouteImport.update({
   id: '/api/github/webhook',
   path: '/api/github/webhook',
@@ -214,6 +232,9 @@ export interface FileRoutesByFullPath {
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/kernel/audit': typeof ApiKernelAuditRoute
+  '/api/kernel/cron': typeof ApiKernelCronRoute
+  '/api/kernel/sync': typeof ApiKernelSyncRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
@@ -247,6 +268,9 @@ export interface FileRoutesByTo {
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/kernel/audit': typeof ApiKernelAuditRoute
+  '/api/kernel/cron': typeof ApiKernelCronRoute
+  '/api/kernel/sync': typeof ApiKernelSyncRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
@@ -281,6 +305,9 @@ export interface FileRoutesById {
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
   '/api/github/webhook': typeof ApiGithubWebhookRoute
+  '/api/kernel/audit': typeof ApiKernelAuditRoute
+  '/api/kernel/cron': typeof ApiKernelCronRoute
+  '/api/kernel/sync': typeof ApiKernelSyncRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/manifest': typeof ApiPublicManifestRouteWithChildren
@@ -316,6 +343,9 @@ export interface FileRouteTypes {
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/kernel/audit'
+    | '/api/kernel/cron'
+    | '/api/kernel/sync'
     | '/api/public/health'
     | '/api/public/ingest'
     | '/api/public/manifest'
@@ -349,6 +379,9 @@ export interface FileRouteTypes {
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/kernel/audit'
+    | '/api/kernel/cron'
+    | '/api/kernel/sync'
     | '/api/public/health'
     | '/api/public/ingest'
     | '/api/public/manifest'
@@ -382,6 +415,9 @@ export interface FileRouteTypes {
     | '/federations/$id'
     | '/api/github/events'
     | '/api/github/webhook'
+    | '/api/kernel/audit'
+    | '/api/kernel/cron'
+    | '/api/kernel/sync'
     | '/api/public/health'
     | '/api/public/ingest'
     | '/api/public/manifest'
@@ -416,6 +452,9 @@ export interface RootRouteChildren {
   FederationsIdRoute: typeof FederationsIdRoute
   ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
   ApiGithubWebhookRoute: typeof ApiGithubWebhookRoute
+  ApiKernelAuditRoute: typeof ApiKernelAuditRoute
+  ApiKernelCronRoute: typeof ApiKernelCronRoute
+  ApiKernelSyncRoute: typeof ApiKernelSyncRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRouteWithChildren
@@ -567,6 +606,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/kernel/sync': {
+      id: '/api/kernel/sync'
+      path: '/api/kernel/sync'
+      fullPath: '/api/kernel/sync'
+      preLoaderRoute: typeof ApiKernelSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/kernel/cron': {
+      id: '/api/kernel/cron'
+      path: '/api/kernel/cron'
+      fullPath: '/api/kernel/cron'
+      preLoaderRoute: typeof ApiKernelCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/kernel/audit': {
+      id: '/api/kernel/audit'
+      path: '/api/kernel/audit'
+      fullPath: '/api/kernel/audit'
+      preLoaderRoute: typeof ApiKernelAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/github/webhook': {
       id: '/api/github/webhook'
       path: '/api/github/webhook'
@@ -694,6 +754,9 @@ const rootRouteChildren: RootRouteChildren = {
   FederationsIdRoute: FederationsIdRoute,
   ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
   ApiGithubWebhookRoute: ApiGithubWebhookRoute,
+  ApiKernelAuditRoute: ApiKernelAuditRoute,
+  ApiKernelCronRoute: ApiKernelCronRoute,
+  ApiKernelSyncRoute: ApiKernelSyncRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicManifestRoute: ApiPublicManifestRouteWithChildren,
