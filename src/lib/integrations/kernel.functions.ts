@@ -9,6 +9,9 @@ import { z } from "zod";
 import { tamvKernel, seedKernelIfEmpty } from "../../../lib/kernel/kernel";
 import type { KernelContext } from "../../../lib/kernel/contract";
 import type { NodeType } from "../../../lib/canonical/types";
+import { readStoreConfig } from "../../../lib/memory/store-config";
+import { pingNeo4j } from "../../../lib/memory/graph-neo4j";
+import { pingQdrant } from "../../../lib/memory/vector-qdrant";
 
 const ContextSchema = z
   .object({
@@ -36,20 +39,24 @@ const IngestInput = z
             id: z.string().min(1).max(256),
             type: z.string().min(1) as z.ZodType<NodeType>,
             title: z.string().min(1).max(512),
-            body: z.string().max(20_000).optional(),
-            tags: z.array(z.string().min(1).max(64)).max(32).default([]),
+            body: z.string().max(50_000).optional(),
+            tags: z.array(z.string().min(1).max(64)).max(64).default([]),
             source: z.string().min(1).max(256).default("api:ingest"),
             ontologyClass: z.string().min(1).max(128).default("tamv.external"),
           })
           .strict(),
       )
       .min(1)
-      .max(50),
+      .max(100),
     context: ContextSchema.optional(),
   })
   .strict();
 
-function ctx(input?: { federation?: string; actorId?: string; language?: string }): KernelContext {
+function ctx(input?: {
+  federation?: string;
+  actorId?: string;
+  language?: string;
+}): KernelContext {
   return {
     federation: input?.federation ?? "central",
     actorId: input?.actorId ?? "anon:web",
@@ -57,22 +64,33 @@ function ctx(input?: { federation?: string; actorId?: string; language?: string 
   };
 }
 
-export const kernelHealth = createServerFn({ method: "GET" }).handler(async () => {
-  seedKernelIfEmpty();
-  return tamvKernel.health();
-});
+export const kernelHealth = createServerFn({ method: "GET" }).handler(
+  async () => {
+    seedKernelIfEmpty();
+    return tamvKernel.health();
+  },
+);
 
-export const kernelEvents = createServerFn({ method: "GET" }).handler(async () => {
-  seedKernelIfEmpty();
-  return tamvKernel.recentEvents(100);
-});
+export const kernelEvents = createServerFn({ method: "GET" }).handler(
+  async () => {
+    seedKernelIfEmpty();
+    return tamvKernel.recentEvents(100);
+  },
+);
+
+export const kernelStores = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const cfg = readStoreConfig();
+    const [neo4j, qdrant] = await Promise.all([pingNeo4j(), pingQdrant()]);
+    return { config: cfg, probes: { neo4j, qdrant } };
+  },
+);
 
 export const kernelQuery = createServerFn({ method: "POST" })
   .inputValidator((input) => QueryInput.parse(input))
   .handler(async ({ data }) => {
     seedKernelIfEmpty();
-    const out = tamvKernel.handleQuery(data.query, ctx(data.context));
-    return out;
+    return tamvKernel.handleQuery(data.query, ctx(data.context));
   });
 
 export const kernelIngest = createServerFn({ method: "POST" })
