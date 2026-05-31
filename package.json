@@ -324,8 +324,8 @@
     "@tanstack/router-plugin": "^1.167.28",
 
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/sdk-node": "^0.203.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.64.1",
+    "@opentelemetry/sdk-node": "^0.218.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.76.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.203.0",
 
     "class-variance-authority": "^0.7.1",
