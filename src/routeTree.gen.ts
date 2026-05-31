@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReposRouteImport } from './routes/repos'
+import { Route as RdmRouteImport } from './routes/rdm'
 import { Route as Mdx5RouteImport } from './routes/mdx5'
 import { Route as KorimaRouteImport } from './routes/korima'
 import { Route as KernelRouteImport } from './routes/kernel'
@@ -20,6 +21,7 @@ import { Route as BookpiRouteImport } from './routes/bookpi'
 import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FederationsIdRouteImport } from './routes/federations.$id'
+import { Route as ApiRdmManifestRouteImport } from './routes/api/rdm/manifest'
 import { Route as ApiPublicSystemicRouteImport } from './routes/api/public/systemic'
 import { Route as ApiPublicStoresRouteImport } from './routes/api/public/stores'
 import { Route as ApiPublicQueryRouteImport } from './routes/api/public/query'
@@ -28,6 +30,12 @@ import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiGithubWebhookRouteImport } from './routes/api/github/webhook'
 import { Route as ApiGithubEventsRouteImport } from './routes/api/github/events'
+import { Route as ApiRdmWebhooksStripeRouteImport } from './routes/api/rdm/webhooks/stripe'
+import { Route as ApiRdmPaymentsCreateRouteImport } from './routes/api/rdm/payments/create'
+import { Route as ApiRdmEconomyRewardRouteImport } from './routes/api/rdm/economy/reward'
+import { Route as ApiRdmCommerceCreateRouteImport } from './routes/api/rdm/commerce/create'
+import { Route as ApiRdmAuthRegisterRouteImport } from './routes/api/rdm/auth/register'
+import { Route as ApiRdmAiAskRouteImport } from './routes/api/rdm/ai/ask'
 import { Route as ApiPublicManifestHistoryRouteImport } from './routes/api/public/manifest/history'
 import { Route as ApiPublicManifestCompareRouteImport } from './routes/api/public/manifest/compare'
 import { Route as ApiPublicAuditTraceIdRouteImport } from './routes/api/public/audit.$traceId'
@@ -36,6 +44,11 @@ import { Route as ApiGithubEventsStreamRouteImport } from './routes/api/github/e
 const ReposRoute = ReposRouteImport.update({
   id: '/repos',
   path: '/repos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RdmRoute = RdmRouteImport.update({
+  id: '/rdm',
+  path: '/rdm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Mdx5Route = Mdx5RouteImport.update({
@@ -88,6 +101,11 @@ const FederationsIdRoute = FederationsIdRouteImport.update({
   path: '/federations/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRdmManifestRoute = ApiRdmManifestRouteImport.update({
+  id: '/api/rdm/manifest',
+  path: '/api/rdm/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSystemicRoute = ApiPublicSystemicRouteImport.update({
   id: '/api/public/systemic',
   path: '/api/public/systemic',
@@ -128,6 +146,36 @@ const ApiGithubEventsRoute = ApiGithubEventsRouteImport.update({
   path: '/api/github/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRdmWebhooksStripeRoute = ApiRdmWebhooksStripeRouteImport.update({
+  id: '/api/rdm/webhooks/stripe',
+  path: '/api/rdm/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRdmPaymentsCreateRoute = ApiRdmPaymentsCreateRouteImport.update({
+  id: '/api/rdm/payments/create',
+  path: '/api/rdm/payments/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRdmEconomyRewardRoute = ApiRdmEconomyRewardRouteImport.update({
+  id: '/api/rdm/economy/reward',
+  path: '/api/rdm/economy/reward',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRdmCommerceCreateRoute = ApiRdmCommerceCreateRouteImport.update({
+  id: '/api/rdm/commerce/create',
+  path: '/api/rdm/commerce/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRdmAuthRegisterRoute = ApiRdmAuthRegisterRouteImport.update({
+  id: '/api/rdm/auth/register',
+  path: '/api/rdm/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRdmAiAskRoute = ApiRdmAiAskRouteImport.update({
+  id: '/api/rdm/ai/ask',
+  path: '/api/rdm/ai/ask',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicManifestHistoryRoute =
   ApiPublicManifestHistoryRouteImport.update({
     id: '/history',
@@ -161,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
+  '/rdm': typeof RdmRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -171,10 +220,17 @@ export interface FileRoutesByFullPath {
   '/api/public/query': typeof ApiPublicQueryRoute
   '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
+  '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
+  '/api/rdm/ai/ask': typeof ApiRdmAiAskRoute
+  '/api/rdm/auth/register': typeof ApiRdmAuthRegisterRoute
+  '/api/rdm/commerce/create': typeof ApiRdmCommerceCreateRoute
+  '/api/rdm/economy/reward': typeof ApiRdmEconomyRewardRoute
+  '/api/rdm/payments/create': typeof ApiRdmPaymentsCreateRoute
+  '/api/rdm/webhooks/stripe': typeof ApiRdmWebhooksStripeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -186,6 +242,7 @@ export interface FileRoutesByTo {
   '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
+  '/rdm': typeof RdmRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -196,10 +253,17 @@ export interface FileRoutesByTo {
   '/api/public/query': typeof ApiPublicQueryRoute
   '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
+  '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
+  '/api/rdm/ai/ask': typeof ApiRdmAiAskRoute
+  '/api/rdm/auth/register': typeof ApiRdmAuthRegisterRoute
+  '/api/rdm/commerce/create': typeof ApiRdmCommerceCreateRoute
+  '/api/rdm/economy/reward': typeof ApiRdmEconomyRewardRoute
+  '/api/rdm/payments/create': typeof ApiRdmPaymentsCreateRoute
+  '/api/rdm/webhooks/stripe': typeof ApiRdmWebhooksStripeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,6 +276,7 @@ export interface FileRoutesById {
   '/kernel': typeof KernelRoute
   '/korima': typeof KorimaRoute
   '/mdx5': typeof Mdx5Route
+  '/rdm': typeof RdmRoute
   '/repos': typeof ReposRoute
   '/federations/$id': typeof FederationsIdRoute
   '/api/github/events': typeof ApiGithubEventsRouteWithChildren
@@ -222,10 +287,17 @@ export interface FileRoutesById {
   '/api/public/query': typeof ApiPublicQueryRoute
   '/api/public/stores': typeof ApiPublicStoresRoute
   '/api/public/systemic': typeof ApiPublicSystemicRoute
+  '/api/rdm/manifest': typeof ApiRdmManifestRoute
   '/api/github/events/stream': typeof ApiGithubEventsStreamRoute
   '/api/public/audit/$traceId': typeof ApiPublicAuditTraceIdRoute
   '/api/public/manifest/compare': typeof ApiPublicManifestCompareRoute
   '/api/public/manifest/history': typeof ApiPublicManifestHistoryRoute
+  '/api/rdm/ai/ask': typeof ApiRdmAiAskRoute
+  '/api/rdm/auth/register': typeof ApiRdmAuthRegisterRoute
+  '/api/rdm/commerce/create': typeof ApiRdmCommerceCreateRoute
+  '/api/rdm/economy/reward': typeof ApiRdmEconomyRewardRoute
+  '/api/rdm/payments/create': typeof ApiRdmPaymentsCreateRoute
+  '/api/rdm/webhooks/stripe': typeof ApiRdmWebhooksStripeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -239,6 +311,7 @@ export interface FileRouteTypes {
     | '/kernel'
     | '/korima'
     | '/mdx5'
+    | '/rdm'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -249,10 +322,17 @@ export interface FileRouteTypes {
     | '/api/public/query'
     | '/api/public/stores'
     | '/api/public/systemic'
+    | '/api/rdm/manifest'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
+    | '/api/rdm/ai/ask'
+    | '/api/rdm/auth/register'
+    | '/api/rdm/commerce/create'
+    | '/api/rdm/economy/reward'
+    | '/api/rdm/payments/create'
+    | '/api/rdm/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,6 +344,7 @@ export interface FileRouteTypes {
     | '/kernel'
     | '/korima'
     | '/mdx5'
+    | '/rdm'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -274,10 +355,17 @@ export interface FileRouteTypes {
     | '/api/public/query'
     | '/api/public/stores'
     | '/api/public/systemic'
+    | '/api/rdm/manifest'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
+    | '/api/rdm/ai/ask'
+    | '/api/rdm/auth/register'
+    | '/api/rdm/commerce/create'
+    | '/api/rdm/economy/reward'
+    | '/api/rdm/payments/create'
+    | '/api/rdm/webhooks/stripe'
   id:
     | '__root__'
     | '/'
@@ -289,6 +377,7 @@ export interface FileRouteTypes {
     | '/kernel'
     | '/korima'
     | '/mdx5'
+    | '/rdm'
     | '/repos'
     | '/federations/$id'
     | '/api/github/events'
@@ -299,10 +388,17 @@ export interface FileRouteTypes {
     | '/api/public/query'
     | '/api/public/stores'
     | '/api/public/systemic'
+    | '/api/rdm/manifest'
     | '/api/github/events/stream'
     | '/api/public/audit/$traceId'
     | '/api/public/manifest/compare'
     | '/api/public/manifest/history'
+    | '/api/rdm/ai/ask'
+    | '/api/rdm/auth/register'
+    | '/api/rdm/commerce/create'
+    | '/api/rdm/economy/reward'
+    | '/api/rdm/payments/create'
+    | '/api/rdm/webhooks/stripe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -315,6 +411,7 @@ export interface RootRouteChildren {
   KernelRoute: typeof KernelRoute
   KorimaRoute: typeof KorimaRoute
   Mdx5Route: typeof Mdx5Route
+  RdmRoute: typeof RdmRoute
   ReposRoute: typeof ReposRoute
   FederationsIdRoute: typeof FederationsIdRoute
   ApiGithubEventsRoute: typeof ApiGithubEventsRouteWithChildren
@@ -325,7 +422,14 @@ export interface RootRouteChildren {
   ApiPublicQueryRoute: typeof ApiPublicQueryRoute
   ApiPublicStoresRoute: typeof ApiPublicStoresRoute
   ApiPublicSystemicRoute: typeof ApiPublicSystemicRoute
+  ApiRdmManifestRoute: typeof ApiRdmManifestRoute
   ApiPublicAuditTraceIdRoute: typeof ApiPublicAuditTraceIdRoute
+  ApiRdmAiAskRoute: typeof ApiRdmAiAskRoute
+  ApiRdmAuthRegisterRoute: typeof ApiRdmAuthRegisterRoute
+  ApiRdmCommerceCreateRoute: typeof ApiRdmCommerceCreateRoute
+  ApiRdmEconomyRewardRoute: typeof ApiRdmEconomyRewardRoute
+  ApiRdmPaymentsCreateRoute: typeof ApiRdmPaymentsCreateRoute
+  ApiRdmWebhooksStripeRoute: typeof ApiRdmWebhooksStripeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -335,6 +439,13 @@ declare module '@tanstack/react-router' {
       path: '/repos'
       fullPath: '/repos'
       preLoaderRoute: typeof ReposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rdm': {
+      id: '/rdm'
+      path: '/rdm'
+      fullPath: '/rdm'
+      preLoaderRoute: typeof RdmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mdx5': {
@@ -407,6 +518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FederationsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rdm/manifest': {
+      id: '/api/rdm/manifest'
+      path: '/api/rdm/manifest'
+      fullPath: '/api/rdm/manifest'
+      preLoaderRoute: typeof ApiRdmManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/systemic': {
       id: '/api/public/systemic'
       path: '/api/public/systemic'
@@ -461,6 +579,48 @@ declare module '@tanstack/react-router' {
       path: '/api/github/events'
       fullPath: '/api/github/events'
       preLoaderRoute: typeof ApiGithubEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/webhooks/stripe': {
+      id: '/api/rdm/webhooks/stripe'
+      path: '/api/rdm/webhooks/stripe'
+      fullPath: '/api/rdm/webhooks/stripe'
+      preLoaderRoute: typeof ApiRdmWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/payments/create': {
+      id: '/api/rdm/payments/create'
+      path: '/api/rdm/payments/create'
+      fullPath: '/api/rdm/payments/create'
+      preLoaderRoute: typeof ApiRdmPaymentsCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/economy/reward': {
+      id: '/api/rdm/economy/reward'
+      path: '/api/rdm/economy/reward'
+      fullPath: '/api/rdm/economy/reward'
+      preLoaderRoute: typeof ApiRdmEconomyRewardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/commerce/create': {
+      id: '/api/rdm/commerce/create'
+      path: '/api/rdm/commerce/create'
+      fullPath: '/api/rdm/commerce/create'
+      preLoaderRoute: typeof ApiRdmCommerceCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/auth/register': {
+      id: '/api/rdm/auth/register'
+      path: '/api/rdm/auth/register'
+      fullPath: '/api/rdm/auth/register'
+      preLoaderRoute: typeof ApiRdmAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rdm/ai/ask': {
+      id: '/api/rdm/ai/ask'
+      path: '/api/rdm/ai/ask'
+      fullPath: '/api/rdm/ai/ask'
+      preLoaderRoute: typeof ApiRdmAiAskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/manifest/history': {
@@ -529,6 +689,7 @@ const rootRouteChildren: RootRouteChildren = {
   KernelRoute: KernelRoute,
   KorimaRoute: KorimaRoute,
   Mdx5Route: Mdx5Route,
+  RdmRoute: RdmRoute,
   ReposRoute: ReposRoute,
   FederationsIdRoute: FederationsIdRoute,
   ApiGithubEventsRoute: ApiGithubEventsRouteWithChildren,
@@ -539,8 +700,25 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicQueryRoute: ApiPublicQueryRoute,
   ApiPublicStoresRoute: ApiPublicStoresRoute,
   ApiPublicSystemicRoute: ApiPublicSystemicRoute,
+  ApiRdmManifestRoute: ApiRdmManifestRoute,
   ApiPublicAuditTraceIdRoute: ApiPublicAuditTraceIdRoute,
+  ApiRdmAiAskRoute: ApiRdmAiAskRoute,
+  ApiRdmAuthRegisterRoute: ApiRdmAuthRegisterRoute,
+  ApiRdmCommerceCreateRoute: ApiRdmCommerceCreateRoute,
+  ApiRdmEconomyRewardRoute: ApiRdmEconomyRewardRoute,
+  ApiRdmPaymentsCreateRoute: ApiRdmPaymentsCreateRoute,
+  ApiRdmWebhooksStripeRoute: ApiRdmWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
